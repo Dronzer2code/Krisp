@@ -1,5 +1,5 @@
 import * as Tone from 'tone';
-import type { Channel, Id, Master, Slot, Workspace } from '../model/types';
+import type { Channel, Id, Master, Slot, SynthPreset, Workspace } from '../model/types';
 import { channelIds, channelOf, isChannelSilenced } from '../store/selectors';
 import { SampleVoice, SynthVoice, type Voice } from './voices';
 
@@ -46,6 +46,10 @@ export interface Engine {
   trigger(slotId: Id, time: number, velocity: number): void;
   preview(slotId: Id): void;
   click(time: number, accent: boolean): void;
+  /** Sound Browser preview: plays a buffer straight into the Master bus (max 8 s). Returns a stop function. */
+  previewBuffer(buffer: AudioBuffer): () => void;
+  /** Sound Browser preview of a synth kit preset. */
+  previewPreset(preset: SynthPreset): void;
   /** Plays a LOOP buffer on an AUDIO lane's Channel, looping to fill `durationSec`. */
   playAudio(laneId: Id, buffer: AudioBuffer, time: number, offsetSec: number, durationSec: number, gainDb: number): void;
   stopAudio(time?: number): void;
@@ -81,6 +85,8 @@ export function createEngine(context: Tone.BaseContext): Engine {
   const slots = new Map<Id, SlotEntry>();
   const lanes = new Map<Id, Strip>();
   const audioSources = new Set<{ src: Tone.ToneBufferSource; gain: Tone.Gain }>();
+  const previewGain = new Tone.Gain({ context, gain: 0.9 }).connect(masterBus);
+  const previewVoices = new Map<SynthPreset, SynthVoice>();
 
   function makeStrip(): Strip {
     const input = new Tone.Gain({ context });
@@ -211,6 +217,30 @@ export function createEngine(context: Tone.BaseContext): Engine {
       }
     },
 
+    previewBuffer(buffer) {
+      const src = new Tone.ToneBufferSource({ context, url: buffer, fadeOut: 0.02 }).connect(previewGain);
+      src.onended = () => setTimeout(() => src.dispose(), 0);
+      const now = context.now() + 0.01;
+      src.start(now);
+      src.stop(now + Math.min(8, buffer.duration));
+      return () => {
+        try {
+          src.stop();
+        } catch {
+          /* already stopped */
+        }
+      };
+    },
+
+    previewPreset(preset) {
+      let v = previewVoices.get(preset);
+      if (!v) {
+        v = new SynthVoice(context, preset, previewGain);
+        previewVoices.set(preset, v);
+      }
+      v.trigger(context.now() + 0.01, 100, 0);
+    },
+
     playAudio(laneId, buffer, time, offsetSec, durationSec, gainDb) {
       const strip = lanes.get(laneId);
       if (!strip || durationSec <= 0) return;
@@ -257,6 +287,8 @@ export function createEngine(context: Tone.BaseContext): Engine {
         gain.dispose();
       });
       audioSources.clear();
+      previewVoices.forEach((v) => v.dispose());
+      previewGain.dispose();
       slots.forEach((_, id) => engine.removeSlot(id));
       lanes.forEach((_, id) => engine.removeAudioLane(id));
       [masterBus, masterEq, compressor, limiter, masterVol, masterMeter, reverb, reverbReturn, metro].forEach((n) => n.dispose());

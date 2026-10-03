@@ -1,8 +1,9 @@
 import { useUi } from '../../store/ui';
 import { CloseIcon } from '../../ui/icons';
 import { Tabs } from '../../ui/Tabs';
+import { SoundBrowser } from './SoundBrowser';
 
-// docs/UI_DESIGN.md → Side panel: [SOUNDS | AI]. Sound Browser lands in T8, AI tools in T10.
+// docs/UI_DESIGN.md → Side panel: [SOUNDS | AI]. AI tools land in T10.
 
 export function SidePanel({ onClose }: { onClose?: () => void }) {
   const tab = useUi((s) => s.sidePanel);
@@ -14,7 +15,7 @@ export function SidePanel({ onClose }: { onClose?: () => void }) {
         {onClose && <button className="icon-btn" aria-label="Close panel" onClick={onClose}><CloseIcon /></button>}
       </div>
       <div role="tabpanel" id={`side-panel-${tab}`} aria-labelledby={`side-tab-${tab}`} className="min-h-0 flex-1">
-        <p className="label">{tab === 'SOUNDS' ? 'Sound Browser' : 'AI tools'}</p>
+        {tab === 'SOUNDS' ? <SoundBrowser /> : <p className="label">AI tools</p>}
       </div>
     </section>
   );
