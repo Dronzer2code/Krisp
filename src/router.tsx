@@ -1,16 +1,18 @@
 import { useSyncExternalStore } from 'react';
 
 // Minimal History API router (no router dependency; docs/TRD.md → STACK).
-// Routes: '/' Home, '/w/:id' Workspace, '/kit' KitDemo (dev only). Screens are wired as they land.
+// Routes: '/' Home, '/w/:id' Workspace, '/kit' KitDemo (dev only), '/dev/magenta' Magenta smoke test (dev only).
 export type Route =
   | { name: 'home' }
   | { name: 'workspace'; id: string }
-  | { name: 'kit' };
+  | { name: 'kit' }
+  | { name: 'dev-magenta' };
 
 export function parseRoute(pathname: string): Route {
   const ws = pathname.match(/^\/w\/([^/]+)\/?$/);
   if (ws) return { name: 'workspace', id: decodeURIComponent(ws[1]) };
   if (pathname === '/kit') return { name: 'kit' };
+  if (pathname === '/dev/magenta') return { name: 'dev-magenta' };
   return { name: 'home' };
 }
 
@@ -25,9 +27,10 @@ function subscribe(cb: () => void) {
   };
 }
 
-export function navigate(path: string) {
+export function navigate(path: string, replace = false) {
   if (path === window.location.pathname) return;
-  window.history.pushState(null, '', path);
+  if (replace) window.history.replaceState(null, '', path);
+  else window.history.pushState(null, '', path);
   listeners.forEach((cb) => cb());
 }
 

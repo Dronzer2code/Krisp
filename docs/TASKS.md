@@ -32,7 +32,7 @@ STATUS: `TODO` · `DOING` · `DONE` · `CUT`.
 |---|---|---|---|---|---|---|
 | T0 | both | Repo source per `CLAUDE.md` → REPOSITORY SOURCE; Entire set up (`docs/SETUP.md`); Vite+React+TS+Tailwind+zustand+tone scaffold; tokens.css; `.env.example`; `scripts/check-secrets.sh` | — | 1 h | `npm run dev` renders Home placeholder | DONE |
 | T0b | A | Run `db/schema.sql` in Tiger; `api/_lib/*`; `/api/workspaces` GET returns `[]` via `npx vercel dev` | T0 | 45 min | VERIFY-5, VERIFY-6 recorded | DONE |
-| T1 | A | Magenta smoke test route: load MusicVAE drums, sample, log; fallback if needed | T0 | 45 min | VERIFY-1, VERIFY-2 recorded | TODO |
+| T1 | A | Magenta smoke test route: load MusicVAE drums, sample, log; fallback if needed | T0 | 45 min | VERIFY-1, VERIFY-2 recorded | DONE |
 | T2 | B | UI primitives (Panel, Knob, Fader, Pad, LedButton, Lcd, Meter, Toggle, Chip, Tabs, Dialog, Tooltip) + `/kit` demo route | T0 | 2.5 h | All primitives keyboard/touch operable, ARIA present | TODO |
 | T3 | A | `model/types.ts`, `defaults.ts`, `presets/kit.ts`, `presets/beats.ts`, store + history (coalescing) + tests | T0 | 2 h | presets.test, store.test pass | TODO |
 | T4 | A | `audio/context.ts`, `engine.ts` (full graph), `voices.ts`, `buffers.ts`, `scheduler.ts` BEAT mode + tests | T3 | 2.5 h | scheduler.test passes; CP2 | TODO |
