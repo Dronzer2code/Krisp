@@ -32,7 +32,8 @@ Human and agent setup steps for every account, key and environment Pocket needs,
 1. Sign up at https://console.cloud.tigerdata.com/signup → choose the free option.
 2. Create a service (free size), name `pocket-db`, region closest to Vercel's default function region you will use.
 3. Download the credentials file immediately (password shown once). Defaults: user `tsdbadmin`, database `tsdb`.
-4. Copy the connection string → `TIGER_DATABASE_URL=postgres://tsdbadmin:<pw>@<host>:<port>/tsdb?sslmode=require`.
+4. Copy the connection string → 
+`TIGER_DATABASE_URL=postgres://tsdbadmin:<pw>@<host>:<port>/tsdb?sslmode=require`.
 5. Open the service's **SQL editor** in Tiger Console → paste `db/schema.sql` → run. Confirm tables `workspaces`, `sounds`, `sound_usage` exist (`\dt` or the console table list). If the generated `tsv` column errors, apply the TRD fallback (VERIFY-6).
 
 ## 3 ELEVENLABS

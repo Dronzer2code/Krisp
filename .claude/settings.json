@@ -3,7 +3,10 @@
     "allow": [
       "PowerShell(git add .claude/settings.json .entire/settings.json .entire/.gitignore docs/SETUP.md docs/TASKS.md)",
       "PowerShell(git push origin main)",
-      "PowerShell(& \"C:\\\\Users\\\\User\\\\.local\\\\bin\\\\entire.exe\" status)"
+      "PowerShell(& \"C:\\\\Users\\\\User\\\\.local\\\\bin\\\\entire.exe\" status)",
+      "PowerShell(Test-Path docs/.env; if \\(Test-Path docs/.env\\) { \\(Get-Content docs/.env | Measure-Object -Line\\).Lines; Get-Content docs/.env | ForEach-Object { \\($_ -split '='\\)[0] } }; git check-ignore -v docs/.env .env)",
+      "PowerShell(git check-ignore -q .env)",
+      "PowerShell(git check-ignore -v tiger-cloud-pocket-db-credentials.txt)"
     ]
   },
   "hooks": {
