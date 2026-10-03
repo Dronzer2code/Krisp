@@ -5,7 +5,7 @@ import { SampleVoice, SynthVoice, type Voice } from './voices';
 
 // docs/TRD.md → AUDIO ENGINE. createEngine(context) works with the live context and an offline context (export).
 //
-// voice → Velocity Gain → EQ3 → Volume → Panner → Meter
+// voice → Velocity Gain → EQ3 → Volume → Mute gate → Panner → Meter
 //                                         Panner → Master bus
 //                                         Panner → Send Gain → Reverb → Reverb return → Master bus
 // Master bus → EQ3 → Compressor → Limiter → Volume → Meter → Destination
@@ -16,6 +16,8 @@ interface Strip {
   input: Tone.Gain;
   eq: Tone.EQ3;
   volume: Tone.Volume;
+  /** Mute/solo gate (gain 0/1, 10 ms ramp). Separate from Volume so fader moves never undo a mute. */
+  gate: Tone.Gain;
   panner: Tone.Panner;
   meter: Tone.Meter;
   send: Tone.Gain;
@@ -54,8 +56,16 @@ export interface Engine {
   playAudio(laneId: Id, buffer: AudioBuffer, time: number, offsetSec: number, durationSec: number, gainDb: number): void;
   stopAudio(time?: number): void;
   meters(): Record<Id | 'master', number>;
+  /** Level in dB of one Channel (Slot or AUDIO lane) or 'master' / 'reverb'. */
+  meterOf(id: Id | 'master' | 'reverb'): number;
+  /** Master [left, right] in dB. */
+  masterLevels(): [number, number];
   gainReduction(): number;
   dispose(): void;
+}
+
+function setIfChanged(param: Tone.Param<'decibels'> | Tone.Param<'positive'> | Tone.Param<'time'>, value: number) {
+  if (Math.abs((param.value as number) - value) > 1e-6) param.value = value;
 }
 
 const soundKey = (slot: Slot) => (slot.sound.kind === 'synth' ? `synth:${slot.sound.preset}` : `sample:${slot.sound.soundId}`);
@@ -67,14 +77,16 @@ export function createEngine(context: Tone.BaseContext): Engine {
   const compressor = new Tone.Compressor({ context });
   const limiter = new Tone.Limiter({ context, threshold: -1 });
   const masterVol = new Tone.Volume({ context });
-  const masterMeter = new Tone.Meter({ context, smoothing: 0.8 });
+  const masterMeter = new Tone.Meter({ context, smoothing: 0.8, channelCount: 2 });
   masterBus.chain(masterEq, compressor, limiter, masterVol, masterMeter);
   masterVol.connect(context.destination);
 
   // Reverb return
   const reverb = new Tone.Reverb({ context, decay: 2.5, wet: 1 });
   const reverbReturn = new Tone.Volume({ context, volume: -6 });
+  const reverbMeter = new Tone.Meter({ context, smoothing: 0.8 });
   reverb.chain(reverbReturn, masterBus);
+  reverbReturn.connect(reverbMeter);
   let reverbDecay = 2.5;
 
   // Metronome: straight to master volume (bypasses mixer)
@@ -92,19 +104,20 @@ export function createEngine(context: Tone.BaseContext): Engine {
     const input = new Tone.Gain({ context });
     const eq = new Tone.EQ3({ context });
     const volume = new Tone.Volume({ context });
+    const gate = new Tone.Gain({ context, gain: 1 });
     const panner = new Tone.Panner({ context });
     const meter = new Tone.Meter({ context, smoothing: 0.8 });
     const send = new Tone.Gain({ context, gain: 0 });
-    input.chain(eq, volume, panner);
+    input.chain(eq, volume, gate, panner);
     panner.connect(meter);
     panner.connect(masterBus);
     panner.connect(send);
     send.connect(reverb);
-    return { input, eq, volume, panner, meter, send };
+    return { input, eq, volume, gate, panner, meter, send };
   }
 
   function disposeStrip(s: Strip) {
-    [s.input, s.eq, s.volume, s.panner, s.meter, s.send].forEach((n) => n.dispose());
+    [s.input, s.eq, s.volume, s.gate, s.panner, s.meter, s.send].forEach((n) => n.dispose());
   }
 
   function makeVoice(slot: Slot, strip: Strip): Voice {
@@ -163,7 +176,7 @@ export function createEngine(context: Tone.BaseContext): Engine {
       const s = slots.get(id)?.strip ?? lanes.get(id);
       if (!s) return;
       s.volume.volume.rampTo(ch.volumeDb, RAMP);
-      s.volume.mute = silenced;
+      s.gate.gain.linearRampTo(silenced ? 0 : 1, 0.01);
       s.panner.pan.rampTo(ch.pan, RAMP);
       s.eq.low.rampTo(ch.eq.low, RAMP);
       s.eq.mid.rampTo(ch.eq.mid, RAMP);
@@ -177,11 +190,13 @@ export function createEngine(context: Tone.BaseContext): Engine {
       masterEq.mid.rampTo(m.eq.mid, RAMP);
       masterEq.high.rampTo(m.eq.high, RAMP);
       // Disabled compressor: threshold 0, ratio 1. Disabled limiter: threshold 0. No rewiring during playback.
-      compressor.threshold.rampTo(m.compressor.enabled ? m.compressor.threshold : 0, RAMP);
-      compressor.ratio.rampTo(m.compressor.enabled ? m.compressor.ratio : 1, RAMP);
-      compressor.attack.rampTo(m.compressor.attack, RAMP);
-      compressor.release.rampTo(m.compressor.release, RAMP);
-      limiter.threshold.rampTo(m.limiter.enabled ? m.limiter.ceiling : 0, RAMP);
+      // Set directly, not ramped: Tone ramps start from 1e-7 when the current value is 0, which is outside the
+      // threshold range [-100, 0]. Threshold/ratio jumps do not click.
+      setIfChanged(compressor.threshold, m.compressor.enabled ? m.compressor.threshold : 0);
+      setIfChanged(compressor.ratio, m.compressor.enabled ? m.compressor.ratio : 1);
+      setIfChanged(compressor.attack, m.compressor.attack);
+      setIfChanged(compressor.release, m.compressor.release);
+      setIfChanged(limiter.threshold, m.limiter.enabled ? m.limiter.ceiling : 0);
       reverbReturn.volume.rampTo(m.reverb.returnDb, RAMP);
       if (m.reverb.decay !== reverbDecay) {
         reverbDecay = m.reverb.decay;
@@ -270,8 +285,20 @@ export function createEngine(context: Tone.BaseContext): Engine {
       });
     },
 
+    meterOf(id) {
+      if (id === 'master') return Math.max(...engine.masterLevels());
+      if (id === 'reverb') return reverbMeter.getValue() as number;
+      const m = slots.get(id)?.strip.meter ?? lanes.get(id)?.meter;
+      return m ? (m.getValue() as number) : -Infinity;
+    },
+
+    masterLevels() {
+      const v = masterMeter.getValue();
+      return Array.isArray(v) ? [v[0], v[1]] : [v, v];
+    },
+
     meters() {
-      const out: Record<string, number> = { master: masterMeter.getValue() as number };
+      const out: Record<string, number> = { master: Math.max(...engine.masterLevels()) };
       slots.forEach((e, id) => (out[id] = e.strip.meter.getValue() as number));
       lanes.forEach((s, id) => (out[id] = s.meter.getValue() as number));
       return out;
@@ -291,7 +318,7 @@ export function createEngine(context: Tone.BaseContext): Engine {
       previewGain.dispose();
       slots.forEach((_, id) => engine.removeSlot(id));
       lanes.forEach((_, id) => engine.removeAudioLane(id));
-      [masterBus, masterEq, compressor, limiter, masterVol, masterMeter, reverb, reverbReturn, metro].forEach((n) => n.dispose());
+      [masterBus, masterEq, compressor, limiter, masterVol, masterMeter, reverb, reverbReturn, reverbMeter, metro].forEach((n) => n.dispose());
     },
   };
   return engine;

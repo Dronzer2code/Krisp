@@ -105,7 +105,7 @@ Icons: inline SVG, 1.5 px stroke, `--ink`, 16 px (play, stop, loop, record, undo
 │ + Add slot            ├──────────────────────────────────────────────┤                      │
 │                       │ Song (Panel): ruler, lanes, clips, + lanes    │                      │
 ├───────────────────────┴──────────────────────────────────────────────┴──────────────────────┤
-│ Mixer drawer (Panel, 260 px, toggled with M): [Kick][Snare]…[Audio 1] | [REVERB] | [MASTER] │
+│ Mixer drawer (Panel, 330 px, toggled with M): [Kick][Snare]…[Audio 1] | [REVERB] | [MASTER] │
 └────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -116,7 +116,7 @@ Region details:
 - **Song:** ruler (bar numbers, loop region as a translucent `--led-on` band), lanes 52 px tall with a header (name, type icon, ⋯). Beat clips: rounded rectangles in Beat colour at 85% opacity with a mini pad map; audio clips: `--graphite-2` with waveform in `--ink-inverse` and a warning dot when length mismatches. Selected clip: 2px `--led-on` outline. Playhead: 2px `--led-on` vertical line.
 - **Side panel — Sounds:** Tabs Presets | Create | Upload | Library. Rows 48 px: preview LedButton, name, kind/source badges, duration (LCD style small), waveform thumbnail (canvas 80×24), **Use**.
 - **Side panel — AI:** four tool cards (Humanize, Variations, Continue, Morph), each a small Panel with model LED (off/amber/green/red), one-sentence description, controls (Wildness knob; Morph A/B selectors + slider), action button. Variations results: 2×2 grid of mini pad maps; hold to audition; Apply / Add as new beat.
-- **Mixer:** channel strip 72 px wide: name + colour LED, EQ knobs (H/M/L, sm), Send knob, Pan knob, Meter beside Fader, M/S LedButtons. Master strip 140 px: EQ, Compressor block (ON LED, threshold, ratio, attack, release knobs, GR LED row), Limiter block (ON LED, ceiling knob), Reverb (decay, return), stereo Meter, Fader.
+- **Mixer** (drawer 330 px tall and strips 84 px wide since 2026-10-03 — 260/72 px could not fit EQ + send + pan + fader + meter without clipping): channel strip name + colour LED, EQ knobs (H/M/L, sm), Send knob, Pan knob, Meter beside Fader, M/S LedButtons. Master strip 140 px: EQ, Compressor block (ON LED, threshold, ratio, attack, release knobs, GR LED row), Limiter block (ON LED, ceiling knob), Reverb (decay, return), stereo Meter, Fader.
 
 ### Responsive
 

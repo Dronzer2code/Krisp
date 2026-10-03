@@ -89,7 +89,7 @@ export default function Workspace({ id }: { id: string }) {
   }
 
   return (
-    <div className="flex min-h-screen flex-col gap-s3 p-s3" style={{ paddingBottom: mixerOpen ? 276 : undefined }}>
+    <div className="flex min-h-screen flex-col gap-s3 p-s3" style={{ paddingBottom: mixerOpen ? 346 : undefined }}>
       <TransportBar />
       <div className="grid min-h-0 flex-1 items-start gap-s3 grid-cols-1 mid:grid-cols-[56px_minmax(0,1fr)] wide:grid-cols-[264px_minmax(0,1fr)_320px]">
         {/* Rack: full at ≥1200, compact at 900–1199, slide-over sheet below 900 */}

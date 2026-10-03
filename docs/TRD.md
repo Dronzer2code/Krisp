@@ -288,7 +288,8 @@ flowchart LR
   MB --> MEQ[Master EQ3] --> COMP[Compressor] --> LIM[Limiter] --> MVOL[Master Volume] --> MM[Master Meter] --> OUT[Destination]
 ```
 
-- Channel mute/solo: effective gain = 0 when `mute`, or when any channel is soloed and this one is not. Implement on the Channel Volume node (`mute` property) to avoid clicks.
+- Channel mute/solo: effective gain = 0 when `mute`, or when any channel is soloed and this one is not. Implemented as a separate gate `Gain` after the Channel Volume (0/1 with a 10 ms linear ramp, no clicks). Changed 2026-10-03: `Volume.mute` was undone by later volume ramps.
+- Compressor/limiter params are set directly (`param.value`), not ramped: Tone ramps start from 1e-7 when the current value is 0, outside the threshold range [-100, 0].
 - Disabled compressor: threshold 0, ratio 1. Disabled limiter: threshold 0. (No rewiring during playback.)
 - Parameter changes use `rampTo(value, 0.02)`.
 - Metronome: a short Synth routed directly to Master Volume (bypasses mixer).

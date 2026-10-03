@@ -17,6 +17,8 @@ export interface KnobProps {
   step?: number;
   disabled?: boolean;
   hideLabel?: boolean;
+  /** Short visible label (e.g. "HI"); `label` stays the accessible name. */
+  shortLabel?: string;
   onChange: (v: number) => void;
   onChangeEnd?: () => void;
 }
@@ -39,7 +41,7 @@ function arc(cx: number, cy: number, r: number, from: number, to: number) {
 }
 
 export function Knob({
-  label, value, min, max, defaultValue, size = 'md', bipolar = false, format = (v) => v.toFixed(2), step, disabled, hideLabel,
+  label, value, min, max, defaultValue, size = 'md', bipolar = false, format = (v) => v.toFixed(2), step, disabled, hideLabel, shortLabel,
   onChange, onChangeEnd,
 }: KnobProps) {
   const [dragging, setDragging] = useState(false);
@@ -125,7 +127,7 @@ export function Knob({
         </div>
         {dragging && <span role="tooltip" className="lcd-tip absolute -top-6 left-1/2 -translate-x-1/2">{format(value)}</span>}
       </div>
-      {!hideLabel && <span className="label">{label}</span>}
+      {!hideLabel && <span className="label whitespace-nowrap">{shortLabel ?? label}</span>}
     </div>
   );
 }
