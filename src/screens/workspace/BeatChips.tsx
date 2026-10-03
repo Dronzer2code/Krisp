@@ -9,12 +9,11 @@ import { Chip } from '../../ui/Chip';
 import { Dialog } from '../../ui/Dialog';
 import { PlusIcon } from '../../ui/icons';
 import { Menu, Swatches } from '../../ui/Menu';
+import { BEAT_DRAG_TYPE } from './dnd';
 import { CHIPS_H, MAIN_GAP } from './layout';
 
 // docs/PROCESS_FLOW.md J3. Chips above the grid: select, + new, Insert preset; context menu Rename,
 // Duplicate, Delete (confirms when used by clips), Change color. Chips drag onto BEAT lanes (J7).
-
-export const BEAT_DRAG_TYPE = 'application/x-pocket-beat';
 
 export function BeatChips() {
   const beats = useWorkspace((s) => s.workspace.beats);

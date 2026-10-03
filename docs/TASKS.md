@@ -38,7 +38,7 @@ STATUS: `TODO` · `DOING` · `DONE` · `CUT`.
 | T4 | A | `audio/context.ts`, `engine.ts` (full graph), `voices.ts`, `buffers.ts`, `scheduler.ts` BEAT mode + tests | T3 | 2.5 h | scheduler.test passes; CP2 | DONE |
 | T5 | B | Workspace screen layout, TransportBar (play/stop, mode, LCD BPM, tap, swing, undo/redo, position), Rack, BeatEditor, BeatChips | T2, T3 | 3 h | AC-F2.1, AC-F2.2, AC-F2.3, AC-F3.1, AC-F3.3, AC-F4.1–4 | DONE |
 | T6 | A | `/api/workspaces` full CRUD, `api/client.ts`, PasscodeGate, autosave + save LED, Home screen + New workspace dialog | T0b, T3, T2 | 2.5 h | AC-F1.1–3, AC-F11.1 | DONE |
-| T7 | B | Song: ruler, lanes, Beat clips (drop, move, resize, delete), previews, SONG scheduling, delete-beat confirmation | T4, T5 | 3 h | AC-F2.4, AC-F5.2, AC-F5.3; CP3 | TODO |
+| T7 | B | Song: ruler, lanes, Beat clips (drop, move, resize, delete), previews, SONG scheduling, delete-beat confirmation | T4, T5 | 3 h | AC-F2.4, AC-F5.2, AC-F5.3; CP3 | DONE |
 | T8 | A | `analyze.ts`, `ai/embed.ts`, `/api/sounds`, `/api/sound-generate`, `/api/sound-audio`, `/api/search`; SoundBrowser (4 tabs), Use → Slot / AUDIO lane; audio clips playback | T6, T7 | 3.5 h | AC-F3.2, AC-F5.1, AC-F6.1–3, AC-F7.1; VERIFY-3, VERIFY-4; CP4 | TODO |
 | T9 | B | Mixer drawer: ChannelStrip, Reverb return, MasterStrip, meters, solo logic | T4, T5 | 2 h | AC-F8.1–3 | TODO |
 | T10 | A | AI: convert.ts + tests, Humanize, Variations (AIPanel) | T1, T5 | 2 h | AC-F9.1–3 | TODO |
