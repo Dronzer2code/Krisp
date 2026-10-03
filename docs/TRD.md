@@ -387,15 +387,15 @@ Pure functions (unit-tested) + one Transport binding.
 
 ## VERIFY REGISTER
 
-| ID | Item | How |
-|---|---|---|
-| VERIFY-1 | `@magenta/music` works under Vite; else UMD from jsDelivr (global `mm`) | Smoke test task T1 |
-| VERIFY-2 | Checkpoint names; `MusicVAE.similar`, `interpolate`, `encode/decode`, `MusicRNN.continueSequence` signatures; GrooVAE usage for humanize | Magenta.js docs / checkpoints list |
-| VERIFY-3 | ElevenLabs sound-generation endpoint, body fields, duration limits, output format, loop support, free-plan restrictions | ElevenLabs API reference |
-| VERIFY-4 | transformers.js v3 `pipeline` options for mean pooling + normalize; model id availability | transformers.js docs |
-| VERIFY-5 | node-postgres TLS with Tiger `sslmode=require` | Connect test from `vercel dev` |
-| VERIFY-6 | Generated column with `array_to_string` accepted | Run schema in Tiger SQL editor |
-| VERIFY-7 | `Tone.Offline` signature and Transport inside offline rendering for the installed Tone version | Tone.js docs |
+| ID | Item | How | Result |
+|---|---|---|---|
+| VERIFY-1 | `@magenta/music` works under Vite; else UMD from jsDelivr (global `mm`) | Smoke test task T1 | TODO |
+| VERIFY-2 | Checkpoint names; `MusicVAE.similar`, `interpolate`, `encode/decode`, `MusicRNN.continueSequence` signatures; GrooVAE usage for humanize | Magenta.js docs / checkpoints list | TODO |
+| VERIFY-3 | ElevenLabs sound-generation endpoint, body fields, duration limits, output format, loop support, free-plan restrictions | ElevenLabs API reference | TODO |
+| VERIFY-4 | transformers.js v3 `pipeline` options for mean pooling + normalize; model id availability | transformers.js docs | TODO |
+| VERIFY-5 | node-postgres TLS with Tiger `sslmode=require` | Connect test from `vercel dev` | PENDING (2026-10-03, pg 8.23.1): pg treats `sslmode=require` as `verify-full` (prints a SECURITY WARNING). New Tiger service presented a cert signed by Tiger's private `ca.timescale.com` → `SELF_SIGNED_CERT_IN_CHAIN`. Tiger docs: new services start self-signed; a signed cert arrives within ~30 min. Re-test; MUST NOT disable verification (`rejectUnauthorized:false`). |
+| VERIFY-6 | Generated column with `array_to_string` accepted | Run schema in Tiger SQL editor | TODO |
+| VERIFY-7 | `Tone.Offline` signature and Transport inside offline rendering for the installed Tone version | Tone.js docs | TODO |
 
 ## RELATED DOCUMENTS
 
