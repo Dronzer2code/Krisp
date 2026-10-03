@@ -202,9 +202,7 @@ CREATE TABLE IF NOT EXISTS sounds (
   duration_ms int NOT NULL,
   audio bytea NOT NULL,
   embedding vector(384) NOT NULL,
-  tsv tsvector GENERATED ALWAYS AS (
-    to_tsvector('english', coalesce(name,'') || ' ' || coalesce(prompt,'') || ' ' || array_to_string(tags,' '))
-  ) STORED,
+  tsv tsvector NOT NULL,   -- VERIFY-6 fallback applied; filled by every INSERT (see below)
   created_at timestamptz NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS sounds_embedding_idx ON sounds USING hnsw (embedding vector_cosine_ops);
@@ -214,7 +212,7 @@ CREATE INDEX IF NOT EXISTS sounds_created_idx ON sounds (created_at DESC);
 CREATE TABLE IF NOT EXISTS sound_usage (day date PRIMARY KEY, count int NOT NULL DEFAULT 0);
 ```
 
-`array_to_string` in a generated column: if Postgres rejects it as non-immutable (VERIFY-6), replace `tsv` with a plain `tsvector` column filled by the insert query using the same expression.
+`tsv` is a plain column because Tiger rejected the generated-column version (VERIFY-6). Every INSERT into `sounds` (`api/sounds.ts`, `api/sound-generate.ts`) MUST set it with `to_tsvector('english', coalesce($name,'') || ' ' || coalesce($prompt,'') || ' ' || array_to_string($tags::text[],' '))`, using the same parameters as the `name`, `prompt`, `tags` columns.
 
 ### Hybrid search query (`api/search.ts`)
 
@@ -393,8 +391,8 @@ Pure functions (unit-tested) + one Transport binding.
 | VERIFY-2 | Checkpoint names; `MusicVAE.similar`, `interpolate`, `encode/decode`, `MusicRNN.continueSequence` signatures; GrooVAE usage for humanize | Magenta.js docs / checkpoints list | TODO |
 | VERIFY-3 | ElevenLabs sound-generation endpoint, body fields, duration limits, output format, loop support, free-plan restrictions | ElevenLabs API reference | TODO |
 | VERIFY-4 | transformers.js v3 `pipeline` options for mean pooling + normalize; model id availability | transformers.js docs | TODO |
-| VERIFY-5 | node-postgres TLS with Tiger `sslmode=require` | Connect test from `vercel dev` | PENDING (2026-10-03, pg 8.23.1): pg treats `sslmode=require` as `verify-full` (prints a SECURITY WARNING). New Tiger service presented a cert signed by Tiger's private `ca.timescale.com` → `SELF_SIGNED_CERT_IN_CHAIN`. Tiger docs: new services start self-signed; a signed cert arrives within ~30 min. Re-test; MUST NOT disable verification (`rejectUnauthorized:false`). |
-| VERIFY-6 | Generated column with `array_to_string` accepted | Run schema in Tiger SQL editor | TODO |
+| VERIFY-5 | node-postgres TLS with Tiger `sslmode=require` | Connect test from `vercel dev` | PENDING (2026-10-03, pg 8.23.1): pg treats `sslmode=require` as `verify-full` (prints a SECURITY WARNING). New Tiger service presented a cert signed by Tiger's private `ca.timescale.com` → `SELF_SIGNED_CERT_IN_CHAIN`. Tiger docs (tigerdata.com/docs/use-timescale/latest/security/strict-ssl): new services start self-signed; a signed cert from Google or ZeroSSL (both in Node's default trust store) arrives "usually within 30 minutes". Still self-signed at 18:45 UTC (~36 min). Re-test; MUST NOT disable verification (`rejectUnauthorized:false`). |
+| VERIFY-6 | Generated column with `array_to_string` accepted | Run schema in Tiger SQL editor | REJECTED (2026-10-03): Tiger SQL editor → "generation expression is not immutable". Fallback applied: `tsv tsvector NOT NULL` filled by each INSERT (see DATABASE). |
 | VERIFY-7 | `Tone.Offline` signature and Transport inside offline rendering for the installed Tone version | Tone.js docs | TODO |
 
 ## RELATED DOCUMENTS

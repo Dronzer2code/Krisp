@@ -20,9 +20,9 @@ CREATE TABLE IF NOT EXISTS sounds (
   duration_ms int NOT NULL,
   audio bytea NOT NULL,
   embedding vector(384) NOT NULL,
-  tsv tsvector GENERATED ALWAYS AS (
-    to_tsvector('english', coalesce(name,'') || ' ' || coalesce(prompt,'') || ' ' || array_to_string(tags,' '))
-  ) STORED,
+  -- VERIFY-6 fallback: Tiger rejects array_to_string in a generated column ("generation expression is not immutable").
+  -- Every INSERT sets tsv = to_tsvector('english', coalesce(name,'') || ' ' || coalesce(prompt,'') || ' ' || array_to_string(tags,' ')).
+  tsv tsvector NOT NULL,
   created_at timestamptz NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS sounds_embedding_idx ON sounds USING hnsw (embedding vector_cosine_ops);
