@@ -285,12 +285,14 @@ flowchart LR
   V[Slot voice / Audio clip player] --> VG[Velocity Gain] --> EQ[Channel EQ3] --> VOL[Channel Volume] --> PAN[Channel Panner] --> CM[Channel Meter]
   PAN --> MB[Master bus Gain]
   PAN --> SEND[Send Gain] --> REV[Reverb] --> RR[Reverb return Volume] --> MB
-  MB --> MEQ[Master EQ3] --> COMP[Compressor] --> LIM[Limiter] --> MVOL[Master Volume] --> MM[Master Meter] --> OUT[Destination]
+  MB --> MEQ[Master EQ3] --> COMP[Compressor] --> LIM[Limiter] --> MVOL[Master Volume] --> CLIP[Ceiling clipper] --> MM[Master Meter]
+  CLIP --> OUT[Destination]
 ```
 
 - Channel mute/solo: effective gain = 0 when `mute`, or when any channel is soloed and this one is not. Implemented as a separate gate `Gain` after the Channel Volume (0/1 with a 10 ms linear ramp, no clicks). Changed 2026-10-03: `Volume.mute` was undone by later volume ramps.
 - Compressor/limiter params are set directly (`param.value`), not ramped: Tone ramps start from 1e-7 when the current value is 0, outside the threshold range [-100, 0].
 - Disabled compressor: threshold 0, ratio 1. Disabled limiter: threshold 0. (No rewiring during playback.)
+- Ceiling clipper (added 2026-10-03): Tone.Limiter is a DynamicsCompressor (automatic makeup gain, transients pass during attack) — measured: a 0 dB sine through a −12 dB/20:1 compressor only dropped to −4.2 dB. A WaveShaper soft clipper `c·tanh(x/c)` at the limiter ceiling (no oversampling — its filters overshoot the ceiling; input pre-scaled ÷8 for +18 dB headroom) after the Master Volume guarantees peaks ≤ ceiling. Limiter off → identity curve.
 - Parameter changes use `rampTo(value, 0.02)`.
 - Metronome: a short Synth routed directly to Master Volume (bypasses mixer).
 - `Engine` API: `ensureSlot(slot)`, `removeSlot(id)`, `ensureAudioLane(id)`, `removeAudioLane(id)`, `applyChannel(id, channel)`, `applyMaster(master)`, `trigger(slotId, time, velocity)`, `preview(slotId)`, `meters(): Record<Id|'master', number>`, `dispose()`.
@@ -395,7 +397,7 @@ Pure functions (unit-tested) + one Transport binding.
 | VERIFY-4 | transformers.js v3 `pipeline` options for mean pooling + normalize; model id availability | transformers.js docs | DONE (2026-10-03, installed @huggingface/transformers 3.8.1 `types/pipelines.d.ts`): `pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2')` then `extractor(text, { pooling: 'mean', normalize: true })` → Tensor (dims [1, 384]; `.data` Float32Array). Model files on the Hub return 200 (`config.json`, `onnx/model_quantized.onnx`). |
 | VERIFY-5 | node-postgres TLS with Tiger `sslmode=require` | Connect test from `vercel dev` | DONE (2026-10-03, pg 8.23.1): pg treats URL `sslmode=require` as `verify-full`, and URL ssl params override the `ssl` option. The Tiger service kept presenting a cert signed by Tiger's private root `O=Timescale Inc, CN=ca.timescale.com` (still >1 h after creation, although Tiger docs say a Google/ZeroSSL cert "usually" arrives within 30 min) → `SELF_SIGNED_CERT_IN_CHAIN`. Fix in `api/_lib/db.ts` `poolConfig()`: strip `sslmode` from the URL, `ssl: { ca: [...tls.rootCertificates, TIGER_ROOT_CA], rejectUnauthorized: true }` (root in `api/_lib/tiger-ca.ts`, valid to 2027-10-20). Full verification stays on; works with either cert. Confirmed: TLSv1.3, `GET /api/workspaces` → `200 {"workspaces":[]}` via `vercel dev`. MUST NOT use `rejectUnauthorized:false`. |
 | VERIFY-6 | Generated column with `array_to_string` accepted | Run schema in Tiger SQL editor | REJECTED (2026-10-03): Tiger SQL editor → "generation expression is not immutable". Fallback applied: `tsv tsvector NOT NULL` filled by each INSERT (see DATABASE). Fallback schema ran cleanly; confirmed tables `workspaces`, `sounds`, `sound_usage`, extensions vector 0.8.6 + pgcrypto 1.4, 4 indexes on `sounds`. |
-| VERIFY-7 | `Tone.Offline` signature and Transport inside offline rendering for the installed Tone version | Tone.js docs | TODO |
+| VERIFY-7 | `Tone.Offline` signature and Transport inside offline rendering for the installed Tone version | Tone.js docs | DONE (2026-10-03, tone 15.1.22 `build/esm/core/context/Offline.d.ts` + live render): `Tone.Offline(callback(context: OfflineContext) => Promise<void> \| void, duration, channels?, sampleRate?) → Promise<ToneAudioBuffer>`; `BaseContext` exposes `transport`, `draw`, `destination`, so the export uses `ctx.transport` and `createEngine(ctx)`. Verified in Chrome: 16-bar Song renders to 44.67 s stereo 44.1 kHz in ~16 s; hits on the step grid; swing 0.5 delays odd 16ths by 0.25 step. |
 
 ## RELATED DOCUMENTS
 

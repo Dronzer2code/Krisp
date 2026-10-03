@@ -8,9 +8,21 @@ import { SampleVoice, SynthVoice, type Voice } from './voices';
 // voice → Velocity Gain → EQ3 → Volume → Mute gate → Panner → Meter
 //                                         Panner → Master bus
 //                                         Panner → Send Gain → Reverb → Reverb return → Master bus
-// Master bus → EQ3 → Compressor → Limiter → Volume → Meter → Destination
+// Master bus → EQ3 → Compressor → Limiter → Volume → Ceiling clipper → Meter → Destination
 
 const RAMP = 0.02;
+const CLIP_RANGE = 8; // +18 dB of headroom through the clipper stage
+
+/** WaveShaper curve over input u ∈ [-1, 1] (= x / CLIP_RANGE). Ceiling null → identity; else c·tanh(x / c). */
+export function clipperCurve(ceilingDb: number | null, n = 4096): Float32Array {
+  const c = ceilingDb === null ? null : Math.pow(10, ceilingDb / 20);
+  const out = new Float32Array(n);
+  for (let i = 0; i < n; i++) {
+    const x = ((i / (n - 1)) * 2 - 1) * CLIP_RANGE;
+    out[i] = c === null ? x : c * Math.tanh(x / c);
+  }
+  return out;
+}
 
 interface Strip {
   input: Tone.Gain;
@@ -76,10 +88,17 @@ export function createEngine(context: Tone.BaseContext): Engine {
   const masterEq = new Tone.EQ3({ context });
   const compressor = new Tone.Compressor({ context });
   const limiter = new Tone.Limiter({ context, threshold: -1 });
+  // DynamicsCompressor-based limiting overshoots on drum transients (and adds makeup gain), so a soft clipper at
+  // the ceiling after the master fader guarantees output peaks ≤ ceiling. Input is pre-scaled by 1/CLIP_RANGE so
+  // the WaveShaper's [-1, 1] domain covers ±CLIP_RANGE (+18 dB); the curve restores the scale.
+  const clipIn = new Tone.Gain({ context, gain: 1 / CLIP_RANGE });
+  const clipper = new Tone.WaveShaper({ context, length: 4096 });
+  clipper.oversample = 'none'; // oversampling filters ring above the curve; 'none' keeps peaks ≤ ceiling
+  let clipCeiling: number | null = NaN;
   const masterVol = new Tone.Volume({ context });
   const masterMeter = new Tone.Meter({ context, smoothing: 0.8, channelCount: 2 });
-  masterBus.chain(masterEq, compressor, limiter, masterVol, masterMeter);
-  masterVol.connect(context.destination);
+  masterBus.chain(masterEq, compressor, limiter, masterVol, clipIn, clipper, masterMeter);
+  clipper.connect(context.destination);
 
   // Reverb return
   const reverb = new Tone.Reverb({ context, decay: 2.5, wet: 1 });
@@ -197,6 +216,11 @@ export function createEngine(context: Tone.BaseContext): Engine {
       setIfChanged(compressor.attack, m.compressor.attack);
       setIfChanged(compressor.release, m.compressor.release);
       setIfChanged(limiter.threshold, m.limiter.enabled ? m.limiter.ceiling : 0);
+      const ceiling = m.limiter.enabled ? m.limiter.ceiling : null;
+      if (ceiling !== clipCeiling) {
+        clipCeiling = ceiling;
+        clipper.curve = clipperCurve(ceiling);
+      }
       reverbReturn.volume.rampTo(m.reverb.returnDb, RAMP);
       if (m.reverb.decay !== reverbDecay) {
         reverbDecay = m.reverb.decay;
@@ -318,7 +342,7 @@ export function createEngine(context: Tone.BaseContext): Engine {
       previewGain.dispose();
       slots.forEach((_, id) => engine.removeSlot(id));
       lanes.forEach((_, id) => engine.removeAudioLane(id));
-      [masterBus, masterEq, compressor, limiter, masterVol, masterMeter, reverb, reverbReturn, reverbMeter, metro].forEach((n) => n.dispose());
+      [masterBus, masterEq, compressor, limiter, masterVol, clipIn, clipper, masterMeter, reverb, reverbReturn, reverbMeter, metro].forEach((n) => n.dispose());
     },
   };
   return engine;
