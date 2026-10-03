@@ -6,13 +6,15 @@ export type Route =
   | { name: 'home' }
   | { name: 'workspace'; id: string }
   | { name: 'kit' }
-  | { name: 'dev-magenta' };
+  | { name: 'dev-magenta' }
+  | { name: 'dev-audio' };
 
 export function parseRoute(pathname: string): Route {
   const ws = pathname.match(/^\/w\/([^/]+)\/?$/);
   if (ws) return { name: 'workspace', id: decodeURIComponent(ws[1]) };
   if (pathname === '/kit') return { name: 'kit' };
   if (pathname === '/dev/magenta') return { name: 'dev-magenta' };
+  if (pathname === '/dev/audio') return { name: 'dev-audio' };
   return { name: 'home' };
 }
 
