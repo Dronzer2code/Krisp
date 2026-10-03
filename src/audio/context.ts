@@ -1,6 +1,7 @@
 import * as Tone from 'tone';
 import type { Id, Workspace } from '../model/types';
 import { useWorkspace } from '../store/workspace';
+import { withAudition } from './audition';
 import { getBuffer, loadBuffer, subscribeBuffers } from './buffers';
 import { createEngine, type Engine } from './engine';
 import { emitHit, setPlayhead } from './playhead';
@@ -77,7 +78,7 @@ export async function play() {
   transport.bpm.value = useWorkspace.getState().workspace.bpm;
   unbind?.();
   unbind = bindScheduler(transport, {
-    getWorkspace: () => useWorkspace.getState().workspace,
+    getWorkspace: () => withAudition(useWorkspace.getState().workspace),
     trigger: (slotId, time, velocity) => {
       e.trigger(slotId, time, velocity);
       Tone.getDraw().schedule(() => emitHit(slotId), time);

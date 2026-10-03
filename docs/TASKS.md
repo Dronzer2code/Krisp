@@ -41,7 +41,7 @@ STATUS: `TODO` · `DOING` · `DONE` · `CUT`.
 | T7 | B | Song: ruler, lanes, Beat clips (drop, move, resize, delete), previews, SONG scheduling, delete-beat confirmation | T4, T5 | 3 h | AC-F2.4, AC-F5.2, AC-F5.3; CP3 | DONE |
 | T8 | A | `analyze.ts`, `ai/embed.ts`, `/api/sounds`, `/api/sound-generate`, `/api/sound-audio`, `/api/search`; SoundBrowser (4 tabs), Use → Slot / AUDIO lane; audio clips playback | T6, T7 | 3.5 h | AC-F3.2, AC-F5.1, AC-F6.1–3, AC-F7.1; VERIFY-3, VERIFY-4; CP4 | DOING (all built; AC-F6.1/AC-F6.3 untested until ELEVENLABS_API_KEY is set) |
 | T9 | B | Mixer drawer: ChannelStrip, Reverb return, MasterStrip, meters, solo logic | T4, T5 | 2 h | AC-F8.1–3 | DONE (AC-F8.2 limiter A/B re-verified offline in T11) |
-| T10 | A | AI: convert.ts + tests, Humanize, Variations (AIPanel) | T1, T5 | 2 h | AC-F9.1–3 | TODO |
+| T10 | A | AI: convert.ts + tests, Humanize, Variations (AIPanel) | T1, T5 | 2 h | AC-F9.1–3 | DONE (Continue + Morph from T14 also built) |
 | T11 | B | Export: wav-encoder + tests, export-wav via Tone.Offline, ExportDialog | T4, T7, T9 | 1.5 h | AC-F10.1; VERIFY-7; CP5 | TODO |
 | T12 | both | Deploy to Vercel, env vars, run every MUST acceptance criterion on live URL; `check-secrets.sh` | T6–T11 | 1 h | AC-F11.2; CP6 | TODO |
 | T13 | B | SHOULD batch in cut-line order reversed: loop region, metronome, clip duplicate, lane rename/delete, channel/master EQ, GR LED, waveform thumbnails | T12 | ≤ 2 h | Each item's AC or visible behaviour | TODO |
