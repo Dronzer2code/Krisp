@@ -22,9 +22,10 @@ Human and agent setup steps for every account, key and environment Pocket needs,
 
 ## 1 REPOSITORY SOURCE AND ENTIRE
 
-- Repository source given by the user: `/et/krisp/krisp`. UNRESOLVED (local path vs remote). Rules: `CLAUDE.md` → REPOSITORY SOURCE.
-- The repository MUST be public on GitHub before deploy (Vercel import + post embed).
-- **Entire:** create an account and follow https://docs.entire.io to capture the Claude Code sessions used to build Pocket for this repository. Exact commands: VERIFY in the docs (MUST NOT be guessed). Keep the session links for `docs/SUBMISSION.md`.
+- Repository source: the Entire repository `/et/krisp/krisp`, git remote `origin` (`entire://aws-ap-south-1.entire.io/et/krisp/krisp`). Mirrored to GitHub at git remote `github` (`https://github.com/Dronzer2code/Krisp.git`) for Vercel. Rules: `CLAUDE.md` → REPOSITORY SOURCE.
+- Every commit is pushed to both remotes: `git push origin main` then `git push github main`.
+- The GitHub repository MUST be public before deploy (Vercel import + post embed).
+- **Entire:** create an account and follow https://docs.entire.io to capture the Claude Code sessions used to build Pocket for this repository. Verified 2026-10-03 (https://docs.entire.io/agents/claude-code and `entire enable --help`, CLI 0.11.3): `entire enable --agent claude-code` (repo setup + Claude Code hooks; `entire agent add claude-code` installs hooks only, into `.claude/settings.json`). Not yet run. Keep the session links for `docs/SUBMISSION.md`.
 
 ## 2 TIGER DATA
 

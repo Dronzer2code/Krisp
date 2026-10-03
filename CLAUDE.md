@@ -28,9 +28,10 @@ These docs supersede any earlier `POCKET_SPEC.md`. If it exists, delete it in th
 
 ## REPOSITORY SOURCE
 
-- The user named the repository source as **`/et/krisp/krisp`**. UNRESOLVED: local path or remote repository.
-- If the path exists locally → use it as the project root. If not → STOP and ask the user for the full clone URL. MUST NOT guess.
-- If its git history has commits before 2026-10-02T02:00:00Z or non-trivial existing code → warn the user (challenge requires a new repo; prior code must be credited).
+- The repository source is the **Entire repository `/et/krisp/krisp`**, git remote **`origin`** (`entire://aws-ap-south-1.entire.io/et/krisp/krisp`, managed with the Entire CLI).
+- It is mirrored to **GitHub** at git remote **`github`** (`https://github.com/Dronzer2code/Krisp.git`). Vercel deploys from GitHub.
+- After every commit MUST push to both: `git push origin main` and `git push github main`.
+- First commit `23653fb` is dated 2026-10-03, inside the challenge window (starts 2026-10-02T02:00:00Z).
 
 ## WORKING RULES
 
