@@ -44,7 +44,7 @@ export function Knob({
 }: KnobProps) {
   const [dragging, setDragging] = useState(false);
   const px = size === 'sm' ? 28 : 36;
-  const box = px + 10;
+  const box = px + (size === 'sm' ? 8 : 10);
   const c = box / 2;
   const snap = (v: number) => (step ? Math.round(v / step) * step : v);
   const norm = (Math.min(max, Math.max(min, value)) - min) / (max - min || 1);

@@ -5,6 +5,8 @@ export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
     extend: {
+      // Layout breakpoints from docs/UI_DESIGN.md → Responsive.
+      screens: { mid: '900px', wide: '1200px' },
       colors: {
         bg: 'var(--bg)',
         panel: 'var(--panel)',

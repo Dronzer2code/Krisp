@@ -98,7 +98,7 @@ Icons: inline SVG, 1.5 px stroke, `--ink`, 16 px (play, stop, loop, record, undo
 ```text
 ┌ Transport (Panel, 64 px) ──────────────────────────────────────────────────────────────┐
 │ ← Home │ ▶ ■ ⟲ │ [BEAT|SONG] │ LCD 090.0 TAP │ SWING ◯ │ METRO ▢ │ 03.2.4  00:41 │ ↶ ↷ │ ● saved │ EXPORT │
-├ Rack (Panel, 240 px) ┬ Main column ───────────────────────────────┬ Side (Panel, 320 px) ┤
+├ Rack (Panel, 264 px) ┬ Main column ───────────────────────────────┬ Side (Panel, 320 px) ┤
 │ ● Kick      ◯tune M S │ Beat chips [Beat 1][Beat 2][+][Insert preset]│ [SOUNDS | AI]        │
 │ ● Snare     ◯tune M S │ Beat Editor (Panel): 8 rows × 16/32 pads     │                      │
 │ …                     │ length 16/32 · clear · record                │                      │
@@ -111,7 +111,7 @@ Icons: inline SVG, 1.5 px stroke, `--ink`, 16 px (play, stop, loop, record, undo
 
 Region details:
 - **Transport:** LED states: play LED green while playing; save LED per PROCESS_FLOW; Export opens ExportDialog.
-- **Rack row** (44 px): LED dot (Slot colour, flashes on hit), name (double-click rename), sound name in `--ink-soft` (click → Sounds panel in replace mode), Preview pad (24 px), Tune knob (sm), M and S LedButtons, ⋯ (Recolor, Remove).
+- **Rack row** (44 px; Rack widened 240 → 264 px on 2026-10-03 so slot names fit next to all row controls): LED dot (Slot colour, flashes on hit), name (double-click rename), sound name in `--ink-soft` (click → Sounds panel in replace mode), Preview pad (24 px), Tune knob (sm), M and S LedButtons, ⋯ (Recolor, Remove).
 - **Beat Editor:** rows align with Rack rows (same 44 px height, same order) so the Rack acts as the row header. Step numbers 1–16 above pads in label style; beat groups visually separated. Velocity shown by glow intensity; microtiming offset shown as a 3 px tick inside the pad shifted left/right.
 - **Song:** ruler (bar numbers, loop region as a translucent `--led-on` band), lanes 52 px tall with a header (name, type icon, ⋯). Beat clips: rounded rectangles in Beat colour at 85% opacity with a mini pad map; audio clips: `--graphite-2` with waveform in `--ink-inverse` and a warning dot when length mismatches. Selected clip: 2px `--led-on` outline. Playhead: 2px `--led-on` vertical line.
 - **Side panel — Sounds:** Tabs Presets | Create | Upload | Library. Rows 48 px: preview LedButton, name, kind/source badges, duration (LCD style small), waveform thumbnail (canvas 80×24), **Use**.

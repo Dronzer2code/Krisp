@@ -18,7 +18,7 @@ export function LedButton({ label, on = false, color = 'var(--led-on)', toggle =
   return (
     <button
       type="button"
-      aria-label={children ? undefined : label}
+      aria-label={label}
       title={label}
       aria-pressed={toggle ? on : undefined}
       className={`led-btn relative inline-flex shrink-0 items-center justify-center gap-s1 ${className}`}

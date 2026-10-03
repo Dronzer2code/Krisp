@@ -14,6 +14,9 @@ export interface PadProps {
   size?: number;
   disabled?: boolean;
   tabIndex?: number;
+  /** Grid coordinates written as data-cell / data-col (playhead + flash are applied via the DOM). */
+  cell?: string;
+  col?: number;
   /** Start of a press: grid decides toggle vs paint. `cycle` = Shift held. */
   onPress?: (e: { cycle: boolean; pointerId: number; pointerType: string }) => void;
   onEnter?: () => void;
@@ -24,7 +27,7 @@ export interface PadProps {
 
 export const Pad = memo(
   forwardRef<HTMLButtonElement, PadProps>(function Pad(
-    { label, on, velocity, color, offset = 0, size = 34, disabled, tabIndex, onPress, onEnter, onLongPress, onKeyDown, onFocus },
+    { label, on, velocity, color, offset = 0, size = 34, disabled, tabIndex, cell, col, onPress, onEnter, onLongPress, onKeyDown, onFocus },
     ref,
   ) {
     const timer = useRef<number | null>(null);
@@ -39,6 +42,8 @@ export const Pad = memo(
         type="button"
         className="pad relative shrink-0 touch-none"
         data-on={on || undefined}
+        data-cell={cell}
+        data-col={col}
         aria-pressed={on}
         aria-label={label}
         disabled={disabled}
@@ -63,6 +68,8 @@ export const Pad = memo(
             }, 400);
           }
         }}
+        // Mouse clicks do not move focus to the pad, so Space keeps meaning Play/Stop (keyboard users Tab in).
+        onMouseDown={(e) => e.preventDefault()}
         onPointerUp={clear}
         onPointerLeave={clear}
         onPointerCancel={clear}
