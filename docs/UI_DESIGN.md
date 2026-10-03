@@ -31,7 +31,7 @@ Screens implement features from `docs/PRD.md`; component file names are in `docs
   --graphite-2: #3A3B3F;
   /* ink */
   --ink: #2B2B2E;
-  --ink-soft: #6E6A63;
+  --ink-soft: #5E5A53;   /* was #6E6A63: 4.28:1 on --panel failed AA; #5E5A53 = 5.45 panel, 4.64 bg, 4.78 sunken */
   --ink-inverse: #F2EFE8;
   /* signals */
   --led-on: #FF6A00;
@@ -133,7 +133,7 @@ Region details:
 
 ## ACCESSIBILITY
 
-- WCAG AA contrast for text and labels on `--panel` (verify `--ink-soft` ≥ 4.5:1; darken if needed).
+- WCAG AA contrast for text and labels on `--panel` (verified 2026-10-03: `--ink-soft` darkened to `#5E5A53`, ≥ 4.5:1 on all surfaces; `--lcd-text` on `--lcd-bg` 7.03:1).
 - Full keyboard path: Tab order Transport → Rack → Beat chips → Grid → Song → Side panel → Mixer.
 - Grid: roving tabindex; arrows move between pads; Space toggles; Shift+Space cycles velocity.
 - Live region announces: "Playing", "Stopped", "Saved", "Sound generated: <name>", AI results.
