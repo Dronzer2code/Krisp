@@ -1,0 +1,38 @@
+/* Design tokens — source: docs/UI_DESIGN.md → DESIGN TOKENS. Keep in sync. */
+:root {
+  /* surfaces */
+  --bg: #D9D4C9;
+  --panel: #E9E5DC;
+  --panel-raised: #F2EFE8;
+  --panel-sunken: #DCD7CC;
+  --graphite: #2F3033;
+  --graphite-2: #3A3B3F;
+  /* ink */
+  --ink: #2B2B2E;
+  --ink-soft: #6E6A63;
+  --ink-inverse: #F2EFE8;
+  /* signals */
+  --led-on: #FF6A00;
+  --led-green: #3DDC84;
+  --led-amber: #FFB020;
+  --led-red: #FF3B30;
+  --lcd-bg: #1E1F21;
+  --lcd-text: #FF8A3D;
+  /* depth */
+  --shadow-raised: 6px 6px 14px rgba(0,0,0,.16), -5px -5px 12px rgba(255,255,255,.85);
+  --shadow-pressed: inset 3px 3px 7px rgba(0,0,0,.18), inset -3px -3px 7px rgba(255,255,255,.7);
+  --shadow-sunken: inset 2px 2px 5px rgba(0,0,0,.20), inset -2px -2px 5px rgba(255,255,255,.6);
+  --hairline: 1px solid rgba(255,255,255,.7);
+  /* shape */
+  --r-lg: 18px; --r-md: 12px; --r-sm: 8px; --r-pad: 9px;
+  /* type */
+  --font-ui: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --label: 600 10px/1 var(--font-ui);       /* uppercase, letter-spacing .08em */
+  --text: 400 13px/1.4 var(--font-ui);
+  --title: 600 15px/1.2 var(--font-ui);
+  /* spacing (4px grid) */
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px;
+  /* motion */
+  --t-fast: 90ms; --t-base: 120ms; --ease: cubic-bezier(.2,.8,.2,1);
+}

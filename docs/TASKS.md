@@ -30,7 +30,7 @@ STATUS: `TODO` · `DOING` · `DONE` · `CUT`.
 
 | ID | Owner | Task | Depends | Box | Acceptance check | STATUS |
 |---|---|---|---|---|---|---|
-| T0 | both | Repo source per `CLAUDE.md` → REPOSITORY SOURCE; Entire set up (`docs/SETUP.md`); Vite+React+TS+Tailwind+zustand+tone scaffold; tokens.css; `.env.example`; `scripts/check-secrets.sh` | — | 1 h | `npm run dev` renders Home placeholder | TODO |
+| T0 | both | Repo source per `CLAUDE.md` → REPOSITORY SOURCE; Entire set up (`docs/SETUP.md`); Vite+React+TS+Tailwind+zustand+tone scaffold; tokens.css; `.env.example`; `scripts/check-secrets.sh` | — | 1 h | `npm run dev` renders Home placeholder | DOING (scaffold done; Entire capture pending) |
 | T0b | A | Run `db/schema.sql` in Tiger; `api/_lib/*`; `/api/workspaces` GET returns `[]` via `npx vercel dev` | T0 | 45 min | VERIFY-5, VERIFY-6 recorded | TODO |
 | T1 | A | Magenta smoke test route: load MusicVAE drums, sample, log; fallback if needed | T0 | 45 min | VERIFY-1, VERIFY-2 recorded | TODO |
 | T2 | B | UI primitives (Panel, Knob, Fader, Pad, LedButton, Lcd, Meter, Toggle, Chip, Tabs, Dialog, Tooltip) + `/kit` demo route | T0 | 2.5 h | All primitives keyboard/touch operable, ARIA present | TODO |

@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.vercel/
+coverage/
+*.log
+.DS_Store
+
+# secrets
+.env
+.env.*
+!.env.example
+
+# Entire local settings
+.entire/settings.local.json
