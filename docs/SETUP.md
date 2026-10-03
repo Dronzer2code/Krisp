@@ -67,6 +67,8 @@ DAILY_SOUND_LIMIT=40
 2. Framework preset: **Vite**. Build command `npm run build`, output `dist` (defaults).
 3. **Environment Variables:** add the 4 variables for Production (and Preview).
 4. **Deploy.** Every push to `main` redeploys.
+- Notes (verified 2026-10-03 in vercel.com/docs): new projects run functions in `iad1` (Washington, D.C.) by default — next to the Tiger service (AWS us-east), so keep the default region. Hobby functions get a 300 s default max duration, enough for ElevenLabs generation; no `vercel.json` is needed.
+- Local `vercel dev` opens a new database TLS connection per request (~2–3 s from outside the US); deployed functions reuse the pooled connection.
 5. Open the live URL on desktop and phone.
 
 ## 6 SMOKE TESTS

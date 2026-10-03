@@ -46,7 +46,7 @@ STATUS: `TODO` · `DOING` · `DONE` · `CUT`.
 | T12 | both | Deploy to Vercel, env vars, run every MUST acceptance criterion on live URL; `check-secrets.sh` | T6–T11 | 1 h | AC-F11.2; CP6 | TODO |
 | T13 | B | SHOULD batch in cut-line order reversed: loop region, metronome, clip duplicate, lane rename/delete, channel/master EQ, GR LED, waveform thumbnails | T12 | ≤ 2 h | Each item's AC or visible behaviour | DONE (built alongside T5–T11: loop region, metronome, clip duplicate, lane rename/delete, channel/master EQ, GR LED, waveform thumbnails, F12 overlay) |
 | T14 | A | SHOULD: MIDI export, Continue, Morph, live record | T12 | ≤ 2 h | AC-F10.2 | DONE |
-| T15 | both | Polish pass against `docs/UI_DESIGN.md` (spacing, labels, focus, motion, empty states, copy) | T12 | 1 h | Checklist in UI_DESIGN principles | TODO |
+| T15 | both | Polish pass against `docs/UI_DESIGN.md` (spacing, labels, focus, motion, empty states, copy) | T12 | 1 h | Checklist in UI_DESIGN principles | DOING (README done; responsive 1440/1050/390 px checked; contrast fixed) |
 | T16 | both | Handover with friend (demo scenario from `docs/MVP.md`), record video, collect quote | T12 | 1.5 h | Video + quote saved | TODO |
 | T17 | both | Write and publish post per `docs/SUBMISSION.md` | T16 | 3 h | Published with tags before CP7 | TODO |
 
