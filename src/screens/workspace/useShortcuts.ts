@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
-import { restart, togglePlay } from '../../audio/context';
+import { currentStepPosition, previewSlot, restart, togglePlay } from '../../audio/context';
+import { selectedBeat } from '../../store/selectors';
 import { useUi } from '../../store/ui';
 import { actions, useWorkspace } from '../../store/workspace';
 import { tap } from './TransportBar';
@@ -24,6 +25,23 @@ function keyboardFocusedControl(el: EventTarget | null): boolean {
   } catch {
     return true;
   }
+}
+
+/** SHOULD F4: keys A–K play Slots 1–8; while playing in BEAT mode the hit is written to the nearest step. */
+function liveRecord(slotIndex: number) {
+  const w = useWorkspace.getState().workspace;
+  const slot = w.rack[slotIndex];
+  if (!slot) return;
+  void previewSlot(slot.id);
+  const beat = selectedBeat(w);
+  const pos = currentStepPosition();
+  if (!beat || pos === null) return;
+  if (w.playMode !== 'BEAT') {
+    useUi.getState().toast('Live record writes in BEAT mode.');
+    return;
+  }
+  const step = ((Math.round(pos) % beat.length) + beat.length) % beat.length;
+  actions.setStep('push', beat.id, slot.id, step, { on: true, velocity: 100, offset: 0 });
 }
 
 export function useShortcuts() {
@@ -74,7 +92,11 @@ export function useShortcuts() {
         return;
       }
       // Live record overrides single letters A–K (incl. S) while Record is on (docs/UI_DESIGN.md precedence).
-      if (ui.record && 'asdfghjk'.includes(k) && k.length === 1) return;
+      if (ui.record && k.length === 1 && 'asdfghjk'.includes(k)) {
+        e.preventDefault();
+        if (!e.repeat) liveRecord('asdfghjk'.indexOf(k));
+        return;
+      }
       switch (k) {
         case 'b':
           actions.setPlayMode('BEAT');

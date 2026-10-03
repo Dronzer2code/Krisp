@@ -6,7 +6,9 @@ import type { Id, Slot, Step } from '../../model/types';
 import { rowOf } from '../../store/ops';
 import { selectedBeat } from '../../store/selectors';
 import { actions, useWorkspace } from '../../store/workspace';
-import { CloseIcon, TrashIcon } from '../../ui/icons';
+import { useUi } from '../../store/ui';
+import { CloseIcon, RecordIcon, TrashIcon } from '../../ui/icons';
+import { LedButton } from '../../ui/LedButton';
 import { Pad } from '../../ui/Pad';
 import { Toggle } from '../../ui/Toggle';
 import { GROUP_GAP, PAD_GAP, PANEL_PAD, ROW_H, STEP_NUMS_GAP, STEP_NUMS_H } from './layout';
@@ -82,6 +84,15 @@ const Row = memo(function Row({ slot, steps, length, padSize, focusCol, onPress,
     </div>
   );
 });
+
+function RecordButton() {
+  const record = useUi((s) => s.record);
+  return (
+    <LedButton label="Live record (keys A–K play Slots 1–8)" on={record} color="var(--led-red)" wide onClick={() => useUi.getState().set({ record: !record })}>
+      <RecordIcon size={12} /> REC {record && <span className="normal-case tracking-normal text-ink-soft">A S D F G H J K</span>}
+    </LedButton>
+  );
+}
 
 export function BeatEditor() {
   const beat = useWorkspace((s) => selectedBeat(s.workspace));
@@ -285,6 +296,7 @@ export function BeatEditor() {
       <div className="mt-s4 flex flex-wrap items-center gap-s4">
         <span className="label">Length</span>
         <Toggle label="Beat length" left="16" right="32" value={String(length) as '16' | '32'} onChange={(v) => actions.setBeatLength(beat.id, Number(v) as 16 | 32)} />
+        <RecordButton />
         <button className="btn ml-auto" onClick={() => actions.clearBeat(beat.id)}><TrashIcon /> Clear beat</button>
       </div>
     </section>

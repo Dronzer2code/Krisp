@@ -127,6 +127,14 @@ export async function restart() {
   }
 }
 
+/** Fractional 16th-step position of the Transport right now (null when stopped). Used by live record. */
+export function currentStepPosition(): number | null {
+  if (!isPlaying()) return null;
+  const w = useWorkspace.getState().workspace;
+  // Position at the audio clock (what you hear), not now + lookAhead (what is being scheduled).
+  return Tone.getTransport().getSecondsAtTime(Tone.getContext().currentTime) / stepSeconds(w.bpm);
+}
+
 export async function previewSlot(slotId: Id) {
   const e = await ensureAudioStarted();
   e.preview(slotId);
