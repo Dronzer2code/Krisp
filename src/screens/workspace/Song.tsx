@@ -14,7 +14,7 @@ import { PlusIcon } from '../../ui/icons';
 import { Splitter } from '../../ui/Splitter';
 import { BAR_W, ClipView } from './ClipView';
 import { BEAT_DRAG_TYPE, SOUND_DRAG_TYPE, type SoundDragPayload } from './dnd';
-import { HEADER_W, LaneRow } from './LaneRow';
+import { HEADER_W, LANE_GRID_BG, LaneRow } from './LaneRow';
 
 // docs/PRD.md F5; docs/PROCESS_FLOW.md J7; docs/UI_DESIGN.md → Song.
 
@@ -169,7 +169,7 @@ export function Song() {
       </div>
 
       <div className="no-scrollbar relative min-w-0 overflow-auto rounded-md bg-panel-sunken shadow-sunken" style={{ height: songH ?? undefined }} onPointerDown={(e) => e.target === e.currentTarget && useUi.getState().set({ selectedClipId: null })}>
-        <div className="relative" style={{ width: HEADER_W + width }}>
+        <div className="relative flex min-h-full flex-col" style={{ width: HEADER_W + width }}>
           <div className="sticky top-0 z-20 flex bg-panel-sunken">
             <div className="sticky left-0 z-10 shrink-0 border-b border-r border-panel-sunken bg-panel" style={{ width: HEADER_W, height: RULER_H }} />
             <Ruler bars={bars} loop={w.loop} />
@@ -191,7 +191,12 @@ export function Song() {
                 ))}
             </LaneRow>
           ))}
-          <SongPlayhead height={lanesHeight} />
+          {/* Filler below the last lane when the Song is taller than its lanes: header column + grid continue. */}
+          <div aria-hidden="true" className="flex flex-1">
+            <div className="sticky left-0 z-10 shrink-0 border-r border-panel-sunken bg-panel" style={{ width: HEADER_W }} />
+            <div className="shrink-0" style={{ width, backgroundImage: LANE_GRID_BG }} />
+          </div>
+          <SongPlayhead height={Math.max(lanesHeight, songH ?? 0)} />
           {w.clips.length === 0 && (
             <p className="pointer-events-none absolute text-ink-soft" style={{ left: HEADER_W + 16, top: RULER_H + 16 }}>Drag a beat here to start your tune.</p>
           )}

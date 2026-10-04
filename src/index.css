@@ -10,6 +10,10 @@ body,
   min-height: 100%;
 }
 
+/* The page still scrolls (wheel, trackpad, keys, touch) but shows no scrollbar. */
+html { scrollbar-width: none; }
+html::-webkit-scrollbar { display: none; }
+
 body {
   margin: 0;
   background: var(--bg);
@@ -53,6 +57,11 @@ body {
 .splitter-grip { background: var(--ink-soft); opacity: .28; transition: opacity var(--t-fast) var(--ease), background var(--t-fast) var(--ease); }
 .splitter:hover .splitter-grip, .splitter:focus-visible .splitter-grip, .splitter[data-dragging] .splitter-grip { background: var(--led-on); opacity: 1; }
 .splitter:focus-visible { outline: none; }
+/* Column splitters beside the beat grid show no line at rest; the grip appears on hover / focus / drag. */
+.splitter[aria-orientation='vertical'] .splitter-grip { opacity: 0; }
+.splitter[aria-orientation='vertical']:hover .splitter-grip,
+.splitter[aria-orientation='vertical']:focus-visible .splitter-grip,
+.splitter[aria-orientation='vertical'][data-dragging] .splitter-grip { opacity: 1; }
 
 /* ── Buttons ── */
 .btn, .led-btn, .chip {

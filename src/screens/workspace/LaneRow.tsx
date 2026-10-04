@@ -13,6 +13,9 @@ import { BEAT_DRAG_TYPE, SOUND_DRAG_TYPE } from './dnd';
 
 export const HEADER_W = 164;
 
+/** Bar and 4-bar grid lines of the clip area (also drawn under the last lane when the Song is taller). */
+export const LANE_GRID_BG = `repeating-linear-gradient(90deg, rgba(0,0,0,.07) 0 1px, transparent 1px ${BAR_W}px), repeating-linear-gradient(90deg, rgba(0,0,0,.05) 0 1px, transparent 1px ${BAR_W * 4}px)`;
+
 export interface LaneRowProps {
   lane: Lane;
   width: number;
@@ -75,7 +78,7 @@ export const LaneRow = memo(function LaneRow({ lane, width, canDelete, onDropAt,
         className="relative shrink-0 border-b border-panel-sunken"
         style={{
           width,
-          backgroundImage: `repeating-linear-gradient(90deg, rgba(0,0,0,.07) 0 1px, transparent 1px ${BAR_W}px), repeating-linear-gradient(90deg, rgba(0,0,0,.05) 0 1px, transparent 1px ${BAR_W * 4}px)`,
+          backgroundImage: LANE_GRID_BG,
         }}
         onDragOver={(e) => {
           if (!accepts(e)) return;
