@@ -38,6 +38,7 @@ export default {
       fontFamily: {
         ui: 'var(--font-ui)',
         display: 'var(--font-display)',
+        hand: 'var(--font-hand)',
       },
       spacing: {
         s1: 'var(--s1)',

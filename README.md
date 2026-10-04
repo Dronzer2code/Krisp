@@ -53,6 +53,7 @@ Pocket stands on these open-source projects and models:
   [all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2) (Apache-2.0) — in-browser text embeddings
 - [@tonejs/midi](https://github.com/Tonejs/Midi) (MIT) — MIDI export
 - [pgvector](https://github.com/pgvector/pgvector) on Tiger Data — vector search
+- [Petaluma Script](https://github.com/steinbergmedia/petaluma) by Steinberg (SIL OFL 1.1, `public/fonts/Petaluma-OFL.txt`) — hand-lettered font of the Home guide
 
 All preset beat patterns are original to this project.
 

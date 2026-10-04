@@ -28,6 +28,7 @@
   /* type */
   --font-ui: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-display: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --font-hand: "Petaluma Script", "Segoe Print", "Comic Sans MS", cursive; /* hand-lettered chart font, Home guide only */
   --label: 600 10px/1 var(--font-ui);       /* uppercase, letter-spacing .08em */
   --text: 400 13px/1.4 var(--font-ui);
   --title: 600 15px/1.2 var(--font-ui);

@@ -1,5 +1,12 @@
 @import './theme/tokens.css';
 
+/* Petaluma Script © Steinberg Media Technologies, SIL Open Font License 1.1 (public/fonts/Petaluma-OFL.txt). */
+@font-face {
+  font-family: 'Petaluma Script';
+  src: url('/fonts/PetalumaScript.woff2') format('woff2');
+  font-display: swap;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -205,3 +212,29 @@ textarea.field { height: auto; min-height: 72px; padding: var(--s2) var(--s3); l
   }
   .pad.flash { filter: none; }
 }
+
+/* ── Home guide: manuscript paper ── */
+.guide-paper {
+  background-color: #F4F0E6;
+  /* Five-line staves every 96 px, like music manuscript paper */
+  background-image: repeating-linear-gradient(180deg,
+    transparent 0 40px,
+    rgba(43,43,46,.10) 40px 41px, transparent 41px 48px,
+    rgba(43,43,46,.10) 48px 49px, transparent 49px 56px,
+    rgba(43,43,46,.10) 56px 57px, transparent 57px 64px,
+    rgba(43,43,46,.10) 64px 65px, transparent 65px 72px,
+    rgba(43,43,46,.10) 72px 73px, transparent 73px 96px);
+  box-shadow: var(--shadow-raised);
+  border-top: var(--hairline);
+}
+.guide-sheet {
+  background-color: rgba(250,248,242,.92);
+  box-shadow: 4px 5px 12px rgba(0,0,0,.10), -3px -3px 8px rgba(255,255,255,.8);
+  border-left: 3px double rgba(43,43,46,.18);
+}
+.guide-sticky {
+  background: #F7E7A6;
+  box-shadow: 3px 4px 10px rgba(0,0,0,.14);
+  transform: rotate(-0.6deg);
+}
+@media (prefers-reduced-motion: reduce) { .guide-sticky { transform: none; } }

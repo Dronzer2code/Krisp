@@ -10,6 +10,7 @@ import { Dialog } from '../ui/Dialog';
 import { MoreIcon, PlusIcon } from '../ui/icons';
 import { Menu } from '../ui/Menu';
 import { Panel } from '../ui/Panel';
+import { Guide } from './Guide';
 
 // docs/UI_DESIGN.md → Home; docs/PROCESS_FLOW.md J1. Workspace "cartridges", New workspace dialog.
 
@@ -196,6 +197,8 @@ export default function Home() {
           ))}
         </ul>
       )}
+
+      <Guide />
 
       <Menu
         anchor={menu?.anchor ?? null}
