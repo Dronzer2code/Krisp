@@ -176,6 +176,8 @@ body {
   border-radius: var(--r-sm); color: var(--ink); font: var(--text);
 }
 .field:focus-visible { outline: 2px solid var(--led-on); outline-offset: 1px; }
+/* Multi-line fields: .field's fixed 32 px height and zero vertical padding would clip the second line. */
+textarea.field { height: auto; min-height: 72px; padding: var(--s2) var(--s3); line-height: 1.4; }
 
 /* ── Dialog ── */
 .dialog-backdrop { background: rgba(40,38,34,.35); animation: fade-in var(--t-base) var(--ease); }

@@ -22,7 +22,7 @@ function Choice<T extends string>({ name, value, options, onChange }: { name: st
           aria-checked={value === o.value}
           disabled={o.disabled}
           title={o.hint}
-          className="chip h-8 px-s3"
+          className="chip inline-flex h-8 items-center rounded-full px-s4"
           data-selected={value === o.value || undefined}
           onClick={() => onChange(o.value)}
         >
