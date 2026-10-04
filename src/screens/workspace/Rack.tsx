@@ -4,7 +4,7 @@ import { PlusIcon } from '../../ui/icons';
 import { FIRST_ROW_TOP, PANEL_PAD } from './layout';
 import { SlotRow } from './SlotRow';
 
-// docs/UI_DESIGN.md → Workspace → Rack (Panel, 264 px; 56 px column of LED dots at 900–1199 px).
+// docs/UI_DESIGN.md → Workspace → Rack (Panel, 304 px; 56 px column of LED dots at 900–1199 px).
 
 const FALLBACK = defaultChannel();
 

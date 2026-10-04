@@ -49,6 +49,7 @@ STATUS: `TODO` · `DOING` · `DONE` · `CUT`.
 | T15 | both | Polish pass against `docs/UI_DESIGN.md` (spacing, labels, focus, motion, empty states, copy) | T12 | 1 h | Checklist in UI_DESIGN principles | DOING (README done; responsive 1440/1050/390 px checked; contrast fixed) |
 | T16 | both | Handover with friend (demo scenario from `docs/MVP.md`), record video, collect quote | T12 | 1.5 h | Video + quote saved | TODO |
 | T17 | both | Write and publish post per `docs/SUBMISSION.md` | T16 | 3 h | Published with tags before CP7 | TODO |
+| T18 | B | Friend feedback 2026-10-04: Volume knobs on Rack rows, AUDIO lane headers and Transport (Master); every Knob turns by rotary drag | T9 | 1 h | `tests/knob.test.ts`; knob turn moves the Mixer Fader to the same dB | DONE |
 
 ## PARALLELISM
 

@@ -1,7 +1,8 @@
 import { useRef, useState } from 'react';
-import { keyStep, useVerticalDrag } from './useDrag';
+import { keyStep, useRotaryDrag } from './useDrag';
 
 // docs/UI_DESIGN.md → PRIMITIVES → Knob. 270° travel, value arc in --led-on, 11 ticks.
+// Every knob turns by circling the pointer around it (useRotaryDrag); never by vertical drag.
 
 export interface KnobProps {
   label: string;
@@ -62,8 +63,8 @@ export function Knob({
     }
   };
 
-  const drag = useVerticalDrag({
-    value, min, max, disabled,
+  const drag = useRotaryDrag({
+    value, min, max, disabled, sweep: SWEEP,
     onChange: (v) => {
       setDragging(true);
       emit(v);
@@ -91,7 +92,8 @@ export function Knob({
         aria-valuenow={Number(value.toFixed(3))}
         aria-valuetext={format(value)}
         aria-disabled={disabled || undefined}
-        className="knob relative cursor-ns-resize touch-none rounded-full"
+        className={`knob relative touch-none rounded-full ${dragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+        title={dragging ? undefined : `${label}: ${format(value)}`}
         style={{ width: box, height: box }}
         {...drag}
         onDoubleClick={() => defaultValue !== undefined && !disabled && commit(defaultValue)}

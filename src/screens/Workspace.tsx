@@ -91,7 +91,7 @@ export default function Workspace({ id }: { id: string }) {
   return (
     <div className="flex min-h-screen flex-col gap-s3 p-s3" style={{ paddingBottom: mixerOpen ? 346 : undefined }}>
       <TransportBar />
-      <div className="grid min-h-0 flex-1 items-start gap-s3 grid-cols-1 mid:grid-cols-[56px_minmax(0,1fr)] wide:grid-cols-[264px_minmax(0,1fr)_320px]">
+      <div className="grid min-h-0 flex-1 items-start gap-s3 grid-cols-1 mid:grid-cols-[56px_minmax(0,1fr)] wide:grid-cols-[304px_minmax(0,1fr)_320px]">
         {/* Rack: full at ≥1200, compact at 900–1199, slide-over sheet below 900 */}
         <div className="hidden wide:block wide:self-stretch"><Rack /></div>
         <div className="hidden mid:block mid:self-stretch wide:hidden"><Rack compact /></div>
@@ -118,7 +118,7 @@ export default function Workspace({ id }: { id: string }) {
       )}
       {rackOpen && (
         <div className="fixed inset-0 z-40 mid:hidden" role="presentation" onPointerDown={(e) => e.target === e.currentTarget && useUi.getState().set({ rackOpen: false })} style={{ background: 'rgba(40,38,34,.25)' }}>
-          <div className="slide-in-left absolute bottom-0 left-0 top-0 w-[min(300px,92vw)] overflow-y-auto p-s3"><Rack /></div>
+          <div className="slide-in-left absolute bottom-0 left-0 top-0 w-[min(340px,92vw)] overflow-y-auto p-s3"><Rack /></div>
         </div>
       )}
 

@@ -12,6 +12,7 @@ import { Lcd } from '../../ui/Lcd';
 import { Led, LedButton } from '../../ui/LedButton';
 import { Toggle } from '../../ui/Toggle';
 import { Tooltip } from '../../ui/Tooltip';
+import { VolumeKnob } from '../../ui/VolumeKnob';
 
 // docs/UI_DESIGN.md → Workspace → Transport. 64 px Panel; wraps into two rows below 900 px.
 
@@ -48,6 +49,7 @@ function PlayButton() {
 export function TransportBar() {
   const bpm = useWorkspace((s) => s.workspace.bpm);
   const swing = useWorkspace((s) => s.workspace.swing);
+  const masterDb = useWorkspace((s) => s.workspace.mixer.master.volumeDb);
   const mode = useWorkspace((s) => s.workspace.playMode);
   const metronome = useWorkspace((s) => s.workspace.metronome);
   const loop = useWorkspace((s) => s.workspace.loop.enabled);
@@ -83,6 +85,9 @@ export function TransportBar() {
       <Knob label="Swing" size="sm" value={swing} min={0} max={SWING_MAX} defaultValue={0}
         format={(v) => `${Math.round((v / SWING_MAX) * 100)}%`}
         onChange={(v) => actions.setSwing('gesture', v)} onChangeEnd={actions.endGesture} />
+
+      <VolumeKnob label="Master volume" shortLabel="MASTER" valueDb={masterDb}
+        onChange={(db) => actions.setMaster('gesture', { volumeDb: db })} onChangeEnd={actions.endGesture} />
 
       <LedButton label="Metronome" on={metronome} wide onClick={() => actions.setMetronome(!metronome)}>METRO</LedButton>
 

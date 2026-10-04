@@ -1,16 +1,17 @@
 import { memo, useState } from 'react';
 import type { DragEvent, ReactNode } from 'react';
 import type { Lane } from '../../model/types';
-import { actions } from '../../store/workspace';
+import { actions, useWorkspace } from '../../store/workspace';
 import { BeatIcon, MoreIcon, WaveIcon } from '../../ui/icons';
 import { Menu } from '../../ui/Menu';
+import { VolumeKnob } from '../../ui/VolumeKnob';
 import { BAR_W, LANE_H } from './ClipView';
 import { BEAT_DRAG_TYPE, SOUND_DRAG_TYPE } from './dnd';
 
-// Song Lane: sticky header (name, type icon, ⋯) + clip area that accepts drops (Beat chips on BEAT lanes,
+// Song Lane: sticky header (name, type icon, Volume knob on AUDIO lanes = Mixer fader, ⋯) + clip area that accepts drops (Beat chips on BEAT lanes,
 // LOOP Sounds on AUDIO lanes).
 
-export const HEADER_W = 128;
+export const HEADER_W = 164;
 
 export interface LaneRowProps {
   lane: Lane;
@@ -24,6 +25,7 @@ export const LaneRow = memo(function LaneRow({ lane, width, canDelete, onDropAt,
   const [menu, setMenu] = useState<HTMLElement | null>(null);
   const [editing, setEditing] = useState(false);
   const [over, setOver] = useState<number | null>(null);
+  const volumeDb = useWorkspace((s) => (lane.type === 'AUDIO' ? s.workspace.mixer.channels[lane.id]?.volumeDb ?? 0 : null));
   const accepts = (e: DragEvent) => e.dataTransfer.types.includes(lane.type === 'BEAT' ? BEAT_DRAG_TYPE : SOUND_DRAG_TYPE);
   const barAt = (e: DragEvent<HTMLDivElement>) => Math.max(0, Math.floor((e.clientX - e.currentTarget.getBoundingClientRect().left) / BAR_W));
 
@@ -52,7 +54,11 @@ export const LaneRow = memo(function LaneRow({ lane, width, canDelete, onDropAt,
             {lane.name}
           </button>
         )}
-        <button className="icon-btn h-6 w-6" aria-label={`${lane.name} options`} aria-haspopup="menu" onClick={(e) => setMenu(e.currentTarget)}><MoreIcon /></button>
+        {volumeDb !== null && (
+          <VolumeKnob label={`${lane.name} volume`} hideLabel valueDb={volumeDb}
+            onChange={(db) => actions.setChannel('gesture', lane.id, { volumeDb: db })} onChangeEnd={actions.endGesture} />
+        )}
+        <button className="icon-btn h-6 w-6 shrink-0" aria-label={`${lane.name} options`} aria-haspopup="menu" onClick={(e) => setMenu(e.currentTarget)}><MoreIcon /></button>
         <Menu
           anchor={menu}
           label={`${lane.name} options`}
