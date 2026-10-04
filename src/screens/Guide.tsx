@@ -54,7 +54,7 @@ function Step({ n, title, children, demo }: { n: number; title: string; children
         <Hand as="h3" className="text-[24px] leading-tight text-ink">{title}</Hand>
       </div>
       <div className="text-[13px] leading-relaxed text-ink">{children}</div>
-      <div className="mt-auto flex min-h-[92px] flex-wrap items-center gap-s3 rounded-md bg-panel/70 p-s3 shadow-sunken">{demo}</div>
+      <div className="guide-well mt-auto flex min-h-[92px] flex-wrap items-center gap-s3 rounded-md p-s3">{demo}</div>
     </li>
   );
 }
@@ -203,7 +203,7 @@ function MixDemo() {
 
 function ControlCard({ name, what, how, children }: { name: string; what: string; how: string; children: ReactNode }) {
   return (
-    <li className="flex flex-col items-center gap-s2 rounded-md bg-panel-raised p-s3 text-center shadow-raised">
+    <li className="guide-sheet flex flex-col items-center gap-s2 rounded-md p-s3 text-center">
       <div className="flex h-[70px] items-center justify-center">{children}</div>
       <Hand as="h3" className="text-[20px] leading-none text-ink">{name}</Hand>
       <p className="text-[12px] leading-snug text-ink">{what}</p>
