@@ -22,12 +22,12 @@ export const ChannelStrip = memo(function ChannelStrip({ id, name, color, channe
         <span className="truncate text-[11px] font-semibold" title={name}>{name}</span>
       </div>
       <div className="grid grid-cols-2 gap-x-[2px]">
-        <Knob label={`${name} EQ high`} shortLabel="HI" size="sm" bipolar value={channel.eq.high} min={-12} max={12} defaultValue={0} format={dbText} onChange={(v) => set({ eq: { ...channel.eq, high: v } })} onChangeEnd={actions.endGesture} />
-        <Knob label={`${name} EQ mid`} shortLabel="MID" size="sm" bipolar value={channel.eq.mid} min={-12} max={12} defaultValue={0} format={dbText} onChange={(v) => set({ eq: { ...channel.eq, mid: v } })} onChangeEnd={actions.endGesture} />
-        <Knob label={`${name} EQ low`} shortLabel="LO" size="sm" bipolar value={channel.eq.low} min={-12} max={12} defaultValue={0} format={dbText} onChange={(v) => set({ eq: { ...channel.eq, low: v } })} onChangeEnd={actions.endGesture} />
+        <Knob label={`${name} EQ high`} shortLabel="HI" size="sm" value={channel.eq.high} min={-12} max={12} defaultValue={0} format={dbText} onChange={(v) => set({ eq: { ...channel.eq, high: v } })} onChangeEnd={actions.endGesture} />
+        <Knob label={`${name} EQ mid`} shortLabel="MID" size="sm" value={channel.eq.mid} min={-12} max={12} defaultValue={0} format={dbText} onChange={(v) => set({ eq: { ...channel.eq, mid: v } })} onChangeEnd={actions.endGesture} />
+        <Knob label={`${name} EQ low`} shortLabel="LO" size="sm" value={channel.eq.low} min={-12} max={12} defaultValue={0} format={dbText} onChange={(v) => set({ eq: { ...channel.eq, low: v } })} onChangeEnd={actions.endGesture} />
         <Knob label={`${name} reverb send`} shortLabel="SEND" size="sm" value={channel.reverbSend} min={0} max={1} defaultValue={0} format={(v) => `${Math.round(v * 100)}%`} onChange={(v) => set({ reverbSend: v })} onChangeEnd={actions.endGesture} />
       </div>
-      <Knob label={`${name} pan`} shortLabel="PAN" size="sm" bipolar value={channel.pan} min={-1} max={1} defaultValue={0} format={panText} onChange={(v) => set({ pan: v })} onChangeEnd={actions.endGesture} />
+      <Knob label={`${name} pan`} shortLabel="PAN" size="sm" value={channel.pan} min={-1} max={1} defaultValue={0} format={panText} onChange={(v) => set({ pan: v })} onChangeEnd={actions.endGesture} />
       <div className="flex items-end gap-[3px]">
         <Fader label={`${name} volume`} valueDb={channel.volumeDb} height={112} onChange={(v) => set({ volumeDb: v })} onChangeEnd={actions.endGesture} />
         <div className="mb-[18px]"><Meter label={`${name} level`} read={read} height={100} /></div>

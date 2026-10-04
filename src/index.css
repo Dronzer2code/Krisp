@@ -45,6 +45,10 @@ body {
   border-radius: var(--r-sm);
 }
 
+/* Scroll without a visible bar (Song: Shift + wheel / trackpad / touch still scroll horizontally) */
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
 /* ── Buttons ── */
 .btn, .led-btn, .chip {
   background: var(--panel-raised);

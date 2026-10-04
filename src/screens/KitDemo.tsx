@@ -41,7 +41,7 @@ export default function KitDemo() {
 
       <Panel label="Controls" className="flex flex-wrap items-end gap-s6 p-s5">
         <Knob label="Swing" value={knob} min={0} max={0.6} defaultValue={0} format={(v) => `${Math.round((v / 0.6) * 100)}%`} onChange={setKnob} onChangeEnd={() => setLog('knob commit')} />
-        <Knob label="Pan" size="sm" bipolar value={pan} min={-1} max={1} defaultValue={0} format={(v) => (Math.abs(v) < 0.01 ? 'C' : v < 0 ? `L${Math.round(-v * 100)}` : `R${Math.round(v * 100)}`)} onChange={setPan} />
+        <Knob label="Pan" size="sm" value={pan} min={-1} max={1} defaultValue={0} format={(v) => (Math.abs(v) < 0.01 ? 'C' : v < 0 ? `L${Math.round(-v * 100)}` : `R${Math.round(v * 100)}`)} onChange={setPan} />
         <Knob label="Disabled" value={0.5} min={0} max={1} disabled onChange={() => {}} />
         <Fader label="Volume" valueDb={fader} onChange={setFader} onChangeEnd={() => setLog('fader commit')} />
         <div className="flex items-end gap-s2">

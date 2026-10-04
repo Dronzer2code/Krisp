@@ -60,9 +60,9 @@ export function MasterStrip() {
       <div className="flex flex-col gap-s2">
         <span className="label text-ink">Master</span>
         <div className="flex gap-[2px]">
-          <Knob label="Master EQ high" shortLabel="HI" size="sm" bipolar value={m.eq.high} min={-12} max={12} defaultValue={0} format={dbText} onChange={(v) => actions.setMaster('gesture', { eq: { high: v } })} onChangeEnd={actions.endGesture} />
-          <Knob label="Master EQ mid" shortLabel="MID" size="sm" bipolar value={m.eq.mid} min={-12} max={12} defaultValue={0} format={dbText} onChange={(v) => actions.setMaster('gesture', { eq: { mid: v } })} onChangeEnd={actions.endGesture} />
-          <Knob label="Master EQ low" shortLabel="LO" size="sm" bipolar value={m.eq.low} min={-12} max={12} defaultValue={0} format={dbText} onChange={(v) => actions.setMaster('gesture', { eq: { low: v } })} onChangeEnd={actions.endGesture} />
+          <Knob label="Master EQ high" shortLabel="HI" size="sm" value={m.eq.high} min={-12} max={12} defaultValue={0} format={dbText} onChange={(v) => actions.setMaster('gesture', { eq: { high: v } })} onChangeEnd={actions.endGesture} />
+          <Knob label="Master EQ mid" shortLabel="MID" size="sm" value={m.eq.mid} min={-12} max={12} defaultValue={0} format={dbText} onChange={(v) => actions.setMaster('gesture', { eq: { mid: v } })} onChangeEnd={actions.endGesture} />
+          <Knob label="Master EQ low" shortLabel="LO" size="sm" value={m.eq.low} min={-12} max={12} defaultValue={0} format={dbText} onChange={(v) => actions.setMaster('gesture', { eq: { low: v } })} onChangeEnd={actions.endGesture} />
         </div>
         <div className="sunken flex flex-col gap-s1 p-s2">
           <div className="flex items-center justify-between gap-s2">

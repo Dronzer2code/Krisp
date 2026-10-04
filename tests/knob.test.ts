@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { angleDelta, pointerAngle, rotaryStep } from '../src/ui/useDrag';
 import { dbToPos, posToDb, roundDb } from '../src/ui/Fader';
+import { knobCenter, knobPos, knobValue } from '../src/ui/Knob';
 
 describe('rotary knob drag', () => {
   it('measures pointer angle clockwise from 12 o’clock', () => {
@@ -43,5 +44,36 @@ describe('volume knob mapping', () => {
     expect(posToDb(dbToPos(-12))).toBeCloseTo(-12);
     expect(roundDb(posToDb(0))).toBe(-60);
     expect(roundDb(-3.04)).toBe(-3);
+  });
+});
+
+describe('knob centring (default at 12 o’clock)', () => {
+  it('centres only a default strictly inside the range', () => {
+    expect(knobCenter(-12, 12, 0)).toBe(0);
+    expect(knobCenter(0, 0.6, 0)).toBeUndefined(); // swing: default = min, stays at 7:30
+    expect(knobCenter(0, 1)).toBeUndefined();
+  });
+
+  it('maps each half of the turn onto its own half of the range', () => {
+    // Compressor ratio 1…20, default 3: 1 → 7:30, 3 → 12 o’clock, 20 → 4:30
+    expect(knobPos(1, 1, 20, 3)).toBe(0);
+    expect(knobPos(3, 1, 20, 3)).toBe(0.5);
+    expect(knobPos(20, 1, 20, 3)).toBe(1);
+    expect(knobPos(2, 1, 20, 3)).toBeCloseTo(0.25);
+    expect(knobValue(0.75, 1, 20, 3)).toBeCloseTo(11.5);
+    for (const v of [1, 2.2, 3, 7, 19.9]) expect(knobValue(knobPos(v, 1, 20, 3), 1, 20, 3)).toBeCloseTo(v);
+  });
+
+  it('volume: 0 dB points up, right half = 0…+6 dB, left half = −∞…0 dB', () => {
+    const c = knobCenter(0, 1, dbToPos(0));
+    expect(knobPos(dbToPos(0), 0, 1, c)).toBeCloseTo(0.5);
+    expect(roundDb(posToDb(knobValue(1, 0, 1, c)))).toBe(6);
+    expect(roundDb(posToDb(knobValue(0, 0, 1, c)))).toBe(-60);
+    expect(posToDb(knobValue(0.5 + 45 / 270, 0, 1, c))).toBeCloseTo(2); // 45° right of top
+  });
+
+  it('a knob without a centre stays linear', () => {
+    expect(knobPos(0.3, 0, 0.6)).toBeCloseTo(0.5);
+    expect(knobValue(0.5, 0, 0.6)).toBeCloseTo(0.3);
   });
 });

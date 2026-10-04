@@ -164,7 +164,7 @@ export function Song() {
         </div>
       </div>
 
-      <div className="relative min-w-0 overflow-x-auto rounded-md bg-panel-sunken shadow-sunken" onPointerDown={(e) => e.target === e.currentTarget && useUi.getState().set({ selectedClipId: null })}>
+      <div className="no-scrollbar relative min-w-0 overflow-x-auto rounded-md bg-panel-sunken shadow-sunken" onPointerDown={(e) => e.target === e.currentTarget && useUi.getState().set({ selectedClipId: null })}>
         <div className="relative" style={{ width: HEADER_W + width }}>
           <div className="flex">
             <div className="sticky left-0 z-10 shrink-0 border-b border-r border-panel-sunken bg-panel" style={{ width: HEADER_W, height: RULER_H }} />

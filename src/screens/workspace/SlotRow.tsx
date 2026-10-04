@@ -106,7 +106,7 @@ export const SlotRow = memo(function SlotRow({ slot, channel, compact }: { slot:
           }
         }}
       />
-      <Knob label={`${slot.name} tune`} hideLabel size="sm" bipolar value={slot.tune} min={-TUNE_RANGE} max={TUNE_RANGE} step={1} defaultValue={0}
+      <Knob label={`${slot.name} tune`} hideLabel size="sm" value={slot.tune} min={-TUNE_RANGE} max={TUNE_RANGE} step={1} defaultValue={0}
         format={(v) => `${v > 0 ? '+' : ''}${v} st`}
         onChange={(v) => actions.updateSlot('gesture', slot.id, { tune: v })} onChangeEnd={actions.endGesture} />
       <VolumeKnob label={`${slot.name} volume`} hideLabel valueDb={channel.volumeDb}

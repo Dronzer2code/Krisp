@@ -3,6 +3,8 @@ import { keyStep, useRotaryDrag } from './useDrag';
 
 // docs/UI_DESIGN.md → PRIMITIVES → Knob. 270° travel, value arc in --led-on, 11 ticks.
 // Every knob turns by circling the pointer around it (useRotaryDrag); never by vertical drag.
+// A default strictly inside the range sits at 12 o'clock: the left half covers min…default, the right half
+// default…max, and the value arc grows from the top (e.g. Volume: 0 dB up, −∞ left, +6 dB right).
 
 export interface KnobProps {
   label: string;
@@ -11,8 +13,6 @@ export interface KnobProps {
   max: number;
   defaultValue?: number;
   size?: 'md' | 'sm';
-  /** Bipolar knobs draw the value arc from the centre (pan, EQ, tune). */
-  bipolar?: boolean;
   format?: (v: number) => string;
   /** Snap to this increment (e.g. 1 for semitones). */
   step?: number;
@@ -26,6 +26,25 @@ export interface KnobProps {
 
 const START = -135;
 const SWEEP = 270;
+
+/** The value that sits at 12 o'clock, if any: a default strictly inside the range. */
+export function knobCenter(min: number, max: number, defaultValue?: number): number | undefined {
+  return defaultValue !== undefined && defaultValue > min && defaultValue < max ? defaultValue : undefined;
+}
+
+/** Value → knob position 0…1 (0 = 7:30, 0.5 = 12 o'clock, 1 = 4:30), piecewise around `center`. */
+export function knobPos(v: number, min: number, max: number, center?: number): number {
+  const x = Math.min(max, Math.max(min, v));
+  if (center === undefined) return (x - min) / (max - min || 1);
+  return x <= center ? (0.5 * (x - min)) / (center - min) : 0.5 + (0.5 * (x - center)) / (max - center);
+}
+
+/** Inverse of knobPos. */
+export function knobValue(p: number, min: number, max: number, center?: number): number {
+  const q = Math.min(1, Math.max(0, p));
+  if (center === undefined) return min + q * (max - min);
+  return q <= 0.5 ? min + (q / 0.5) * (center - min) : center + ((q - 0.5) / 0.5) * (max - center);
+}
 
 function polar(cx: number, cy: number, r: number, deg: number) {
   const a = ((deg - 90) * Math.PI) / 180;
@@ -42,7 +61,7 @@ function arc(cx: number, cy: number, r: number, from: number, to: number) {
 }
 
 export function Knob({
-  label, value, min, max, defaultValue, size = 'md', bipolar = false, format = (v) => v.toFixed(2), step, disabled, hideLabel, shortLabel,
+  label, value, min, max, defaultValue, size = 'md', format = (v) => v.toFixed(2), step, disabled, hideLabel, shortLabel,
   onChange, onChangeEnd,
 }: KnobProps) {
   const [dragging, setDragging] = useState(false);
@@ -50,9 +69,10 @@ export function Knob({
   const box = px + (size === 'sm' ? 8 : 10);
   const c = box / 2;
   const snap = (v: number) => (step ? Math.round(v / step) * step : v);
-  const norm = (Math.min(max, Math.max(min, value)) - min) / (max - min || 1);
-  const angle = START + norm * SWEEP;
-  const zeroAngle = bipolar ? START + ((0 - min) / (max - min)) * SWEEP : START;
+  const center = knobCenter(min, max, defaultValue);
+  const pos = knobPos(value, min, max, center);
+  const angle = START + pos * SWEEP;
+  const zeroAngle = center === undefined ? START : START + SWEEP / 2;
   const lastEmitted = useRef(value);
 
   const emit = (v: number) => {
@@ -63,11 +83,12 @@ export function Knob({
     }
   };
 
+  // The drag works in knob position, so each half of the turn covers its own half of the range.
   const drag = useRotaryDrag({
-    value, min, max, disabled, sweep: SWEEP,
-    onChange: (v) => {
+    value: pos, min: 0, max: 1, disabled, sweep: SWEEP,
+    onChange: (p) => {
       setDragging(true);
-      emit(v);
+      emit(knobValue(p, min, max, center));
     },
     onEnd: () => {
       setDragging(false);
@@ -100,7 +121,7 @@ export function Knob({
         onWheel={(e) => {
           if (disabled) return;
           e.preventDefault();
-          commit(Math.min(max, Math.max(min, value - Math.sign(e.deltaY) * ((max - min) / 50))));
+          commit(knobValue(pos - Math.sign(e.deltaY) * 0.02, min, max, center));
         }}
         onKeyDown={(e) => {
           if (disabled) return;
