@@ -40,14 +40,17 @@ export interface FaderProps {
   valueDb: number;
   height?: number;
   disabled?: boolean;
+  /** Hide the visible label (the strip already names the channel); `label` stays the accessible name. */
+  hideLabel?: boolean;
   onChange: (db: number) => void;
   onChangeEnd?: () => void;
 }
 
 const MARKS = [6, 0, -6, -12, -24, -48, FADER_MIN_DB];
-const CAP_H = 34;
+export const FADER_CAP_H = 34;
+const CAP_H = FADER_CAP_H;
 
-export function Fader({ label, valueDb, height = 140, disabled, onChange, onChangeEnd }: FaderProps) {
+export function Fader({ label, valueDb, height = 140, disabled, hideLabel, onChange, onChangeEnd }: FaderProps) {
   const track = height - CAP_H;
   const pos = dbToPos(valueDb);
   const st = useRef<{ y: number; pos: number; id: number } | null>(null);
@@ -130,7 +133,7 @@ export function Fader({ label, valueDb, height = 140, disabled, onChange, onChan
           {dragging && <span role="tooltip" className="lcd-tip absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap">{formatDb(valueDb)}</span>}
         </div>
       </div>
-      <span className="label">{label}</span>
+      {!hideLabel && <span className="label">{label}</span>}
     </div>
   );
 }

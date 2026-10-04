@@ -1,10 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { getEngine } from '../../audio/context';
 import { actions, useWorkspace } from '../../store/workspace';
-import { Fader } from '../../ui/Fader';
 import { Knob } from '../../ui/Knob';
 import { LedButton } from '../../ui/LedButton';
-import { Meter } from '../../ui/Meter';
+import { FaderMeter } from '../../ui/FaderMeter';
 
 // docs/UI_DESIGN.md → Master strip: EQ, Compressor (ON, threshold, ratio, attack, release, GR LED row),
 // Limiter (ON, ceiling), Reverb (decay, return), stereo Meter, Fader. Plus the Reverb return strip.
@@ -40,14 +39,13 @@ function GrLeds() {
 export function ReverbStrip() {
   const reverb = useWorkspace((s) => s.workspace.mixer.master.reverb);
   return (
-    <section aria-label="Reverb return" className="flex w-[84px] shrink-0 flex-col items-center gap-s2 rounded-md bg-panel-raised px-s1 py-s2 shadow-raised">
+    <section aria-label="Reverb return" className="flex h-full w-[84px] shrink-0 flex-col items-center gap-s2 rounded-md bg-panel-raised px-s1 py-s2 shadow-raised">
       <span className="label text-ink">Reverb</span>
       <Knob label="Reverb decay" shortLabel="DECAY" size="sm" value={reverb.decay} min={0.5} max={8} defaultValue={2.5} format={(v) => `${v.toFixed(1)} s`}
         onChange={(v) => actions.setMaster('gesture', { reverb: { decay: Math.round(v * 10) / 10 } })} onChangeEnd={actions.endGesture} />
-      <div className="mt-auto flex items-end gap-[3px]">
-        <Fader label="Reverb return" valueDb={reverb.returnDb} height={112} onChange={(v) => actions.setMaster('gesture', { reverb: { returnDb: v } })} onChangeEnd={actions.endGesture} />
-        <div className="mb-[18px]"><Meter label="Reverb return level" read={() => getEngine()?.meterOf('reverb') ?? -Infinity} height={100} /></div>
-      </div>
+      <FaderMeter label="Reverb return" valueDb={reverb.returnDb} meters={[{ label: 'Reverb return level', read: () => getEngine()?.meterOf('reverb') ?? -Infinity }]}
+        onChange={(v) => actions.setMaster('gesture', { reverb: { returnDb: v } })} onChangeEnd={actions.endGesture} />
+      <span className="label shrink-0">Return</span>
     </section>
   );
 }
@@ -56,7 +54,7 @@ export function MasterStrip() {
   const m = useWorkspace((s) => s.workspace.mixer.master);
   const c = m.compressor;
   return (
-    <section aria-label="Master" className="flex shrink-0 gap-s3 rounded-md bg-panel-raised px-s3 py-s2 shadow-raised">
+    <section aria-label="Master" className="flex h-full shrink-0 gap-s3 rounded-md bg-panel-raised px-s3 py-s2 shadow-raised">
       <div className="flex flex-col gap-s2">
         <span className="label text-ink">Master</span>
         <div className="flex gap-[2px]">
@@ -81,12 +79,18 @@ export function MasterStrip() {
           <Knob label="Limiter ceiling" shortLabel="CEIL" size="sm" value={m.limiter.ceiling} min={-12} max={0} defaultValue={-1} format={dbText} disabled={!m.limiter.enabled} onChange={(v) => actions.setMaster('gesture', { limiter: { ceiling: Math.round(v * 10) / 10 } })} onChangeEnd={actions.endGesture} />
         </div>
       </div>
-      <div className="flex items-end gap-[3px] self-end">
-        <Fader label="Master volume" valueDb={m.volumeDb} height={150} onChange={(v) => actions.setMaster('gesture', { volumeDb: v })} onChangeEnd={actions.endGesture} />
-        <div className="mb-[18px] flex gap-[2px]">
-          <Meter label="Master left" read={() => getEngine()?.masterLevels()[0] ?? -Infinity} height={138} />
-          <Meter label="Master right" read={() => getEngine()?.masterLevels()[1] ?? -Infinity} height={138} />
-        </div>
+      <div className="flex h-full w-[64px] flex-col items-center gap-s1">
+        <FaderMeter
+          label="Master volume"
+          valueDb={m.volumeDb}
+          meters={[
+            { label: 'Master left', read: () => getEngine()?.masterLevels()[0] ?? -Infinity },
+            { label: 'Master right', read: () => getEngine()?.masterLevels()[1] ?? -Infinity },
+          ]}
+          onChange={(v) => actions.setMaster('gesture', { volumeDb: v })}
+          onChangeEnd={actions.endGesture}
+        />
+        <span className="label shrink-0">Volume</span>
       </div>
     </section>
   );

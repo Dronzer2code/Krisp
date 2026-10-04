@@ -49,6 +49,11 @@ body {
 .no-scrollbar { scrollbar-width: none; }
 .no-scrollbar::-webkit-scrollbar { display: none; }
 
+/* ── Splitter (panel resize grip) ── */
+.splitter-grip { background: var(--ink-soft); opacity: .28; transition: opacity var(--t-fast) var(--ease), background var(--t-fast) var(--ease); }
+.splitter:hover .splitter-grip, .splitter:focus-visible .splitter-grip, .splitter[data-dragging] .splitter-grip { background: var(--led-on); opacity: 1; }
+.splitter:focus-visible { outline: none; }
+
 /* ── Buttons ── */
 .btn, .led-btn, .chip {
   background: var(--panel-raised);

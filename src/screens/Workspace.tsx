@@ -4,9 +4,11 @@ import { flushPending, startAutosave, stopAutosave } from '../api/autosave';
 import { getWorkspace } from '../api/workspaces';
 import { prefetchBuffers, stop, warmUpOnFirstGesture } from '../audio/context';
 import { navigate } from '../router';
+import { LAYOUT_DEFAULTS, LAYOUT_LIMITS, useLayout } from '../store/layout';
 import { useUi } from '../store/ui';
 import { useWorkspace } from '../store/workspace';
 import { Panel } from '../ui/Panel';
+import { Splitter } from '../ui/Splitter';
 import { BeatChips } from './workspace/BeatChips';
 import { BeatEditor } from './workspace/BeatEditor';
 import { Rack } from './workspace/Rack';
@@ -20,6 +22,19 @@ const Mixer = lazy(() => import('./workspace/Mixer'));
 const ExportDialog = lazy(() => import('./workspace/ExportDialog'));
 
 // docs/UI_DESIGN.md → Workspace (desktop ≥ 1200 px; Rack collapses at 900–1199; sheets below 900).
+
+const MIN_MAIN = 520;
+const WIDE_CHROME = 24 + 24; // page padding + two 12 px splitters
+
+function useViewportWidth() {
+  const [w, setW] = useState(() => window.innerWidth);
+  useEffect(() => {
+    const on = () => setW(window.innerWidth);
+    window.addEventListener('resize', on);
+    return () => window.removeEventListener('resize', on);
+  }, []);
+  return w;
+}
 
 type Load = { state: 'loading' } | { state: 'ready' } | { state: 'error'; message: string };
 
@@ -64,6 +79,12 @@ export default function Workspace({ id }: { id: string }) {
   const sideOpen = useUi((s) => s.sideOpen);
   const rackOpen = useUi((s) => s.rackOpen);
   const exportOpen = useUi((s) => s.exportOpen);
+  const { rackW: savedRackW, sideW: savedSideW, mixerH, setSize } = useLayout();
+  // The beat grid keeps at least MIN_MAIN px: saved widths give way on narrower windows (they are not overwritten).
+  const viewportW = useViewportWidth();
+  const spare = viewportW - WIDE_CHROME - MIN_MAIN;
+  const sideW = Math.max(LAYOUT_LIMITS.sideW.min, Math.min(savedSideW, spare - LAYOUT_LIMITS.rackW.min));
+  const rackW = Math.max(LAYOUT_LIMITS.rackW.min, Math.min(savedRackW, spare - sideW));
   const name = useWorkspace((s) => s.workspace.name);
   useShortcuts();
   useEffect(() => warmUpOnFirstGesture(), []);
@@ -90,11 +111,16 @@ export default function Workspace({ id }: { id: string }) {
   }
 
   return (
-    <div className="flex min-h-screen flex-col gap-s3 p-s3" style={{ paddingBottom: mixerOpen ? 346 : undefined }}>
+    <div className="flex min-h-screen flex-col gap-s3 p-s3" style={{ paddingBottom: mixerOpen ? mixerH + 16 : undefined }}>
       <TransportBar />
-      <div className="grid min-h-0 flex-1 items-start gap-s3 grid-cols-1 mid:grid-cols-[56px_minmax(0,1fr)] wide:grid-cols-[304px_minmax(0,1fr)_320px]">
-        {/* Rack: full at ≥1200, compact at 900–1199, slide-over sheet below 900 */}
+      <div
+        className="grid min-h-0 flex-1 items-start gap-s3 grid-cols-1 mid:grid-cols-[56px_minmax(0,1fr)] wide:gap-x-0 wide:grid-cols-[var(--rack-w)_12px_minmax(0,1fr)_12px_var(--side-w)]"
+        style={{ ['--rack-w' as string]: `${rackW}px`, ['--side-w' as string]: `${sideW}px` }}
+      >
+        {/* Rack: full at ≥1200 (resizable), compact at 900–1199, slide-over sheet below 900 */}
         <div className="hidden wide:block wide:self-stretch"><Rack /></div>
+        <Splitter label="Rack width" axis="x" className="hidden wide:flex wide:self-stretch" value={rackW} min={LAYOUT_LIMITS.rackW.min} max={Math.max(LAYOUT_LIMITS.rackW.min, Math.min(LAYOUT_LIMITS.rackW.max, spare - sideW))}
+          onChange={(v) => setSize({ rackW: Math.min(v, spare - sideW) })} onReset={() => setSize({ rackW: LAYOUT_DEFAULTS.rackW })} />
         <div className="hidden mid:block mid:self-stretch wide:hidden"><Rack compact /></div>
 
         <main className="flex min-w-0 flex-col gap-s3" aria-label="Beat and Song">
@@ -108,6 +134,8 @@ export default function Workspace({ id }: { id: string }) {
           <Song />
         </main>
 
+        <Splitter label="Side panel width" axis="x" direction={-1} className="hidden wide:flex wide:self-stretch" value={sideW} min={LAYOUT_LIMITS.sideW.min} max={Math.max(LAYOUT_LIMITS.sideW.min, Math.min(LAYOUT_LIMITS.sideW.max, spare - rackW))}
+          onChange={(v) => setSize({ sideW: Math.min(v, spare - rackW) })} onReset={() => setSize({ sideW: LAYOUT_DEFAULTS.sideW })} />
         <aside className="hidden wide:block wide:self-stretch" aria-label="Sounds and AI"><SidePanel /></aside>
       </div>
 
