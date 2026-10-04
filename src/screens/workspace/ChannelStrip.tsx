@@ -7,7 +7,7 @@ import { LedButton } from '../../ui/LedButton';
 import { FaderMeter } from '../../ui/FaderMeter';
 
 // docs/UI_DESIGN.md → Mixer channel strip: name + colour LED, EQ (H/M/L, sm), Send, Pan, Meter beside Fader, M/S.
-// The strip fills the drawer height; the Fader takes whatever height is left.
+// The strip fills the drawer height (the Fader takes the free height) and grows from 84 px to share the free width.
 
 const panText = (v: number) => (Math.abs(v) < 0.01 ? 'C' : v < 0 ? `L${Math.round(-v * 100)}` : `R${Math.round(v * 100)}`);
 const dbText = (v: number) => `${v > 0 ? '+' : ''}${v.toFixed(1)} dB`;
@@ -16,7 +16,7 @@ export const ChannelStrip = memo(function ChannelStrip({ id, name, color, channe
   const set = useCallback((patch: Partial<Channel>) => actions.setChannel('gesture', id, patch), [id]);
   const read = useCallback(() => getEngine()?.meterOf(id) ?? -Infinity, [id]);
   return (
-    <section aria-label={`${name} channel`} className="flex h-full w-[84px] shrink-0 flex-col items-center gap-s1 rounded-md bg-panel-raised px-s1 py-s2 shadow-raised" style={{ opacity: silenced ? 0.6 : 1 }}>
+    <section aria-label={`${name} channel`} className="flex h-full min-w-[84px] max-w-[200px] flex-[1_1_84px] flex-col items-center gap-s1 rounded-md bg-panel-raised px-s1 py-s2 shadow-raised" style={{ opacity: silenced ? 0.6 : 1 }}>
       <div className="flex w-full items-center gap-s1 px-s1">
         <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: color, boxShadow: `0 0 5px ${color}` }} />
         <span className="truncate text-[11px] font-semibold" title={name}>{name}</span>

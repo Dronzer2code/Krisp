@@ -34,3 +34,18 @@ describe('position', () => {
     expect(formatClock(125)).toBe('02:05');
   });
 });
+
+import { padGeometry } from '../src/screens/workspace/BeatEditor';
+
+describe('padGeometry (pads fill the Beat Editor row)', () => {
+  it('stretches width to the free space, caps height at 40 so rows stay 44 px', () => {
+    const g = padGeometry(1200, 16, 22);
+    expect(g.h).toBe(40);
+    expect(16 * g.w + 15 * 4 + 3 * 6).toBeLessThanOrEqual(1200);
+    expect(16 * (g.w + 1) + 15 * 4 + 3 * 6).toBeGreaterThan(1200);
+  });
+  it('stays square below 40 px and never under the minimum (then scrolls)', () => {
+    expect(padGeometry(500, 16, 22)).toEqual({ w: 26, h: 26 });
+    expect(padGeometry(300, 32, 22)).toEqual({ w: 22, h: 22 });
+  });
+});

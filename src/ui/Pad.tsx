@@ -12,6 +12,8 @@ export interface PadProps {
   /** Microtiming offset (−0.5..0.5 step), drawn as a tick. */
   offset?: number;
   size?: number;
+  /** Width when the grid stretches pads to fill the row (height stays `size`). */
+  width?: number;
   disabled?: boolean;
   tabIndex?: number;
   /** Grid coordinates written as data-cell / data-col (playhead + flash are applied via the DOM). */
@@ -27,7 +29,7 @@ export interface PadProps {
 
 export const Pad = memo(
   forwardRef<HTMLButtonElement, PadProps>(function Pad(
-    { label, on, velocity, color, offset = 0, size = 34, disabled, tabIndex, cell, col, onPress, onEnter, onLongPress, onKeyDown, onFocus },
+    { label, on, velocity, color, offset = 0, size = 34, width, disabled, tabIndex, cell, col, onPress, onEnter, onLongPress, onKeyDown, onFocus },
     ref,
   ) {
     const timer = useRef<number | null>(null);
@@ -49,7 +51,7 @@ export const Pad = memo(
         disabled={disabled}
         tabIndex={tabIndex}
         style={{
-          width: size,
+          width: width ?? size,
           height: size,
           ['--pad-color' as string]: color,
           ['--pad-level' as string]: level,

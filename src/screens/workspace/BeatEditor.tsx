@@ -23,8 +23,16 @@ const VEL_NAME: Record<number, string> = { 40: 'ghost', 80: 'soft', 100: 'normal
 const ROW_LABEL_W = 92; // name label shown when the Rack is a slide-over (< 900 px)
 const CLEAR_W = 28;
 
-function padsWidth(n: number, size: number) {
-  return n * size + (n - 1) * PAD_GAP + (Math.ceil(n / 4) - 1) * (GROUP_GAP - PAD_GAP);
+const PAD_MAX_H = 40; // rows are 44 px tall and line up with the Rack
+
+function gapsWidth(n: number) {
+  return (n - 1) * PAD_GAP + (Math.ceil(n / 4) - 1) * (GROUP_GAP - PAD_GAP);
+}
+
+/** Pads stretch to fill the row: width = share of the free space, height capped so rows stay 44 px. */
+export function padGeometry(avail: number, n: number, minSize: number): { w: number; h: number } {
+  const w = Math.max(minSize, Math.floor((avail - gapsWidth(n)) / n));
+  return { w, h: Math.min(w, PAD_MAX_H) };
 }
 
 interface RowProps {
@@ -32,6 +40,7 @@ interface RowProps {
   steps: Step[];
   length: number;
   padSize: number;
+  padW: number;
   focusCol: number;
   onPress: (slotId: Id, i: number, p: Press) => void;
   onEnter: (slotId: Id, i: number) => void;
@@ -41,7 +50,7 @@ interface RowProps {
   onClear: (slotId: Id) => void;
 }
 
-const Row = memo(function Row({ slot, steps, length, padSize, focusCol, onPress, onEnter, onLongPress, onKey, onFocusCell, onClear }: RowProps) {
+const Row = memo(function Row({ slot, steps, length, padSize, padW, focusCol, onPress, onEnter, onLongPress, onKey, onFocusCell, onClear }: RowProps) {
   const groups = length / 4;
   return (
     <div className="flex items-center" style={{ height: ROW_H }} role="row" aria-label={slot.name}>
@@ -66,6 +75,7 @@ const Row = memo(function Row({ slot, steps, length, padSize, focusCol, onPress,
                   offset={st.offset}
                   color={slot.color}
                   size={padSize}
+                  width={padW}
                   tabIndex={focusCol === i ? 0 : -1}
                   onPress={(p) => onPress(slot.id, i, p)}
                   onEnter={() => onEnter(slot.id, i)}
@@ -101,10 +111,11 @@ export function BeatEditor() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const paint = useRef<Paint>(null);
   const [focus, setFocus] = useState<{ slotId: Id | null; col: number }>({ slotId: null, col: 0 });
-  const [padSize, setPadSize] = useState(34);
+  const [pad, setPad] = useState({ w: 34, h: 34 });
+  const padSize = pad.h;
   const length = beat?.length ?? 16;
 
-  // Pad size follows the available width (min 22 desktop / 32 touch; scrolls horizontally below that).
+  // Pads fill the available width (min 22 desktop / 32 touch; scrolls horizontally below that).
   useLayoutEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
@@ -112,9 +123,8 @@ export function BeatEditor() {
       const labelW = window.innerWidth < 900 ? ROW_LABEL_W : 0;
       const avail = el.clientWidth - labelW - CLEAR_W - 4;
       const minSize = window.matchMedia('(pointer: coarse)').matches ? 32 : 22;
-      let size = 40;
-      while (size > minSize && padsWidth(length, size) > avail) size--;
-      setPadSize(size);
+      const next = padGeometry(avail, length, minSize);
+      setPad((cur) => (cur.w === next.w && cur.h === next.h ? cur : next));
     };
     fit();
     const ro = new ResizeObserver(fit);
@@ -266,7 +276,7 @@ export function BeatEditor() {
             {Array.from({ length: length / 4 }, (_, g) => (
               <div key={g} className="flex" style={{ gap: PAD_GAP }}>
                 {Array.from({ length: 4 }, (_, k) => (
-                  <span key={k} className="label flex items-end justify-center" style={{ width: padSize, color: k === 0 ? 'var(--ink)' : undefined }}>
+                  <span key={k} className="label flex items-end justify-center" style={{ width: pad.w, color: k === 0 ? 'var(--ink)' : undefined }}>
                     {g * 4 + k + 1}
                   </span>
                 ))}
@@ -282,6 +292,7 @@ export function BeatEditor() {
               steps={beat.steps[slot.id] ?? emptyRow(length)}
               length={length}
               padSize={padSize}
+              padW={pad.w}
               focusCol={slot.id === focusSlot ? focus.col : -1}
               onPress={onPress}
               onEnter={onEnter}
