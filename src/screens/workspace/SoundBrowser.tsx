@@ -1,51 +1,32 @@
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { embed, getEmbedStatus, soundEmbeddingText, subscribeEmbedStatus } from '../../ai/embed';
 import { canonicalMime, decode, durationMs, guessMime, suggestKind, validateUpload, type SoundKind } from '../../audio/analyze';
 import { loadBuffer, putBuffer } from '../../audio/buffers';
 import { ApiError } from '../../api/client';
 import {
-  generateSound, listSounds, remainingGenerations, searchSounds, shapePrompt, suggestNameAndTags, toBase64, uploadSound,
+  generateSound, remainingGenerations, searchSounds, shapePrompt, suggestNameAndTags, toBase64, uploadSound,
   type SearchResult, type SoundMeta,
 } from '../../api/sounds';
 import { KIT, KIT_ORDER } from '../../presets/kit';
+import {
+  addSoundToPlaylist, addToLibrary, createLibraryPlaylist, deleteLibraryPlaylist, openPlaylist, playlistSounds, refreshLibrary,
+  renameLibraryPlaylist, unsortedSounds, useLibrary,
+} from '../../store/library';
+import type { Playlist } from '../../api/playlists';
 import { useUi, type SoundsTab } from '../../store/ui';
 import { useWorkspace } from '../../store/workspace';
 import { Knob } from '../../ui/Knob';
 import { Led, LedButton } from '../../ui/LedButton';
 import { Menu } from '../../ui/Menu';
-import { PlayIcon, SearchIcon, SparkleIcon, UploadIcon } from '../../ui/icons';
+import { BackIcon, FolderIcon, MoreIcon, PlayIcon, PlusIcon, SearchIcon, SparkleIcon, UploadIcon } from '../../ui/icons';
 import { Tabs } from '../../ui/Tabs';
 import { Toggle } from '../../ui/Toggle';
 import { assignPresetToSlot, previewPreset } from './soundActions';
+import { SOUND_DRAG_TYPE, type SoundDragPayload } from './dnd';
+import { ConfirmDialog, NameDialog } from './SoundDialogs';
 import { Badge, SoundRow } from './SoundRow';
 
 // docs/PRD.md F6/F7; docs/PROCESS_FLOW.md J4–J6, SF2–SF4; docs/UI_DESIGN.md → Side panel Sounds.
-
-// ── Library cache shared by the tabs ──
-let library: SoundMeta[] | null = null;
-let libraryError = false;
-const libListeners = new Set<() => void>();
-const emitLib = () => libListeners.forEach((cb) => cb());
-async function refreshLibrary() {
-  try {
-    library = await listSounds(undefined, 200);
-    libraryError = false;
-  } catch {
-    libraryError = true;
-  }
-  emitLib();
-}
-function addToLibrary(s: SoundMeta) {
-  library = [s, ...(library ?? []).filter((x) => x.id !== s.id)];
-  emitLib();
-}
-function useLibrary() {
-  const subscribe = useCallback((cb: () => void) => {
-    libListeners.add(cb);
-    return () => libListeners.delete(cb);
-  }, []);
-  return useSyncExternalStore(subscribe, () => library);
-}
 
 function useEmbedStatus() {
   return useSyncExternalStore(subscribeEmbedStatus, getEmbedStatus);
@@ -309,19 +290,74 @@ function UploadTab() {
   );
 }
 
-// ── Library tab (hybrid search) ──
+// ── Library tab: playlists (folders) + unsorted Sounds, hybrid search across everything ──
+
+function FolderRow({ playlist, count, onOpen }: { playlist: Playlist; count: number; onOpen: () => void }) {
+  const [menu, setMenu] = useState<HTMLElement | null>(null);
+  const [dlg, setDlg] = useState<null | 'rename' | 'delete'>(null);
+  const [over, setOver] = useState(false);
+  return (
+    <li
+      className="flex min-h-11 items-center gap-s2 rounded-sm px-s1 hover:bg-panel-sunken"
+      style={over ? { background: 'var(--panel-sunken)', outline: '2px dashed var(--led-on)', outlineOffset: -2 } : undefined}
+      onDragOver={(e) => {
+        if (!e.dataTransfer.types.includes(SOUND_DRAG_TYPE)) return;
+        e.preventDefault();
+        setOver(true);
+      }}
+      onDragLeave={() => setOver(false)}
+      onDrop={(e) => {
+        setOver(false);
+        try {
+          const d = JSON.parse(e.dataTransfer.getData(SOUND_DRAG_TYPE)) as SoundDragPayload;
+          const s = useLibrary.getState().sounds?.find((x) => x.id === d.id);
+          if (s) void addSoundToPlaylist(s, playlist.id);
+        } catch {
+          /* not a sound */
+        }
+      }}
+    >
+      <button type="button" className="flex min-w-0 flex-1 items-center gap-s2 py-s2 text-left" onClick={onOpen} aria-label={`Open playlist ${playlist.name}, ${count} sounds`}>
+        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm text-led-on shadow-raised" style={{ background: 'var(--panel-raised)' }}><FolderIcon /></span>
+        <span className="min-w-0 flex-1 truncate text-[12px] font-semibold">{playlist.name}</span>
+        <span className="font-display text-[11px] text-ink-soft">{count}</span>
+      </button>
+      <button className="icon-btn h-7 w-6 shrink-0" aria-label={`${playlist.name} options`} aria-haspopup="menu" onClick={(e) => setMenu(e.currentTarget)}><MoreIcon /></button>
+      <Menu
+        anchor={menu}
+        label={`${playlist.name} options`}
+        onClose={() => setMenu(null)}
+        items={[
+          { label: 'Open', onSelect: onOpen },
+          { label: 'Rename', onSelect: () => setDlg('rename') },
+          { label: 'Delete playlist', danger: true, onSelect: () => setDlg('delete') },
+        ]}
+      />
+      <NameDialog open={dlg === 'rename'} title="Rename playlist" label="Playlist name" initial={playlist.name} submit="Rename"
+        onSubmit={(n) => renameLibraryPlaylist(playlist, n)} onClose={() => setDlg(null)} />
+      <ConfirmDialog open={dlg === 'delete'} title={`Delete “${playlist.name}”?`} confirm="Delete playlist"
+        body="Only the playlist goes. Its sounds stay in your Library (unsorted if they are in no other playlist)."
+        onConfirm={() => void deleteLibraryPlaylist(playlist)} onClose={() => setDlg(null)} />
+    </li>
+  );
+}
+
 function LibraryTab() {
-  const lib = useLibrary();
+  const lib = useLibrary((s) => s.sounds);
+  const playlists = useLibrary((s) => s.playlists);
+  const libraryError = useLibrary((s) => s.error);
+  const openId = useLibrary((s) => s.openPlaylistId);
   const replaceSlotId = useUi((s) => s.replaceSlotId);
   const [q, setQ] = useState('');
   const [kind, setKind] = useState<SoundKind | 'ALL'>(replaceSlotId ? 'ONE_SHOT' : 'ALL');
   const [results, setResults] = useState<SearchResult[] | null>(null);
   const [searching, setSearching] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [creating, setCreating] = useState(false);
   const seq = useRef(0);
 
   useEffect(() => {
-    if (library === null) void refreshLibrary();
+    if (useLibrary.getState().sounds === null) void refreshLibrary();
   }, []);
   // Kind filter follows context (J6): replacing a Slot sound → One-shot; back to All afterwards.
   useEffect(() => {
@@ -353,7 +389,11 @@ function LibraryTab() {
     return () => window.clearTimeout(t);
   }, [q, kind]);
 
-  const shown = results ?? (lib ?? []).filter((s) => kind === 'ALL' || s.kind === kind);
+  const byKind = <T extends { kind: SoundKind }>(xs: T[]) => xs.filter((s) => kind === 'ALL' || s.kind === kind);
+  const open = playlists.find((p) => p.id === openId) ?? null;
+  const all = lib ?? [];
+  const inFolder = open ? byKind(playlistSounds(all, open)) : [];
+  const unsorted = byKind(unsortedSounds(all, playlists));
 
   return (
     <div className="flex flex-col gap-s3">
@@ -373,15 +413,60 @@ function LibraryTab() {
       </div>
       {searching && <p className="label" role="status">Searching…</p>}
       {error && <p role="alert" className="text-[12px] text-[#B3261E]">{error}</p>}
-      {libraryError && !results && <p role="alert" className="text-[12px] text-[#B3261E]">Could not load the library. <button className="underline" onClick={() => void refreshLibrary()}>Retry</button></p>}
-      {lib !== null && shown.length === 0 && !searching && (
-        <p className="text-ink-soft">{results ? 'No matches. Try other words.' : 'No sounds yet. Create one or upload your own.'}</p>
+      {libraryError && results === null && <p role="alert" className="text-[12px] text-[#B3261E]">Could not load the library. <button className="underline" onClick={() => void refreshLibrary()}>Retry</button></p>}
+
+      {results !== null ? (
+        <>
+          {results.length === 0 && !searching && <p className="text-ink-soft">No matches. Try other words.</p>}
+          <ul className="flex flex-col" aria-label="Search results">
+            {results.map((s) => <SoundRow key={s.id} sound={s} badges={{ vector: s.vector_hit, keyword: s.keyword_hit }} />)}
+          </ul>
+        </>
+      ) : open ? (
+        <>
+          <div className="flex items-center gap-s2">
+            <button className="icon-btn h-7 w-7" aria-label="Back to Library" onClick={() => openPlaylist(null)}><BackIcon /></button>
+            <span className="flex min-w-0 items-center gap-s2 text-[12px]">
+              <button className="text-ink-soft hover:text-ink" onClick={() => openPlaylist(null)}>Library</button>
+              <span className="text-ink-soft">/</span>
+              <span className="shrink-0 text-led-on"><FolderIcon size={14} /></span>
+              <b className="truncate">{open.name}</b>
+            </span>
+            <span className="ml-auto font-display text-[11px] text-ink-soft">{open.sound_ids.length}</span>
+          </div>
+          {inFolder.length === 0 && <p className="text-[12px] text-ink-soft">This playlist is empty. Use ⋯ → Add to playlist on any sound, or drag a sound onto the folder.</p>}
+          <ul className="flex flex-col" aria-label={`Playlist ${open.name}`}>
+            {inFolder.map((s) => <SoundRow key={s.id} sound={s} />)}
+          </ul>
+        </>
+      ) : (
+        <>
+          <div className="flex items-center gap-s2">
+            <span className="label text-ink">Playlists</span>
+            <button className="btn ml-auto h-7 px-s2 text-[11px]" onClick={() => setCreating(true)}><PlusIcon size={12} /> New playlist</button>
+          </div>
+          {playlists.length === 0 ? (
+            <p className="text-[12px] text-ink-soft">Group sounds into folders — “Kicks”, “Lo-fi loops”… Create one here or from any sound’s ⋯ menu.</p>
+          ) : (
+            <ul className="flex flex-col" aria-label="Playlists">
+              {playlists.map((p) => (
+                <FolderRow key={p.id} playlist={p} count={byKind(playlistSounds(all, p)).length} onOpen={() => openPlaylist(p.id)} />
+              ))}
+            </ul>
+          )}
+          <div className="mt-s1 flex items-center gap-s2 border-t border-panel-sunken pt-s3">
+            <span className="label text-ink">Unsorted</span>
+            <span className="font-display text-[11px] text-ink-soft">{unsorted.length}</span>
+          </div>
+          {lib !== null && all.length === 0 && <p className="text-ink-soft">No sounds yet. Create one or upload your own.</p>}
+          {lib !== null && all.length > 0 && unsorted.length === 0 && <p className="text-[12px] text-ink-soft">Everything is in a playlist.</p>}
+          <ul className="flex flex-col" aria-label="Unsorted sounds">
+            {unsorted.map((s) => <SoundRow key={s.id} sound={s} />)}
+          </ul>
+        </>
       )}
-      <ul className="flex flex-col" aria-label={results ? 'Search results' : 'Library'}>
-        {shown.map((s) => (
-          <SoundRow key={s.id} sound={s} badges={results ? { vector: (s as SearchResult).vector_hit, keyword: (s as SearchResult).keyword_hit } : undefined} />
-        ))}
-      </ul>
+      <NameDialog open={creating} title="New playlist" label="Playlist name" initial="" submit="Create"
+        onSubmit={async (n) => { await createLibraryPlaylist(n); }} onClose={() => setCreating(false)} />
     </div>
   );
 }

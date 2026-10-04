@@ -45,6 +45,7 @@ All are also recorded in the doc named.
 | Shared pitch | Model notes go to the first Slot with a pitch; later Slots with the same pitch (Clap 38) keep their steps | `src/ai/convert.ts` |
 | Extra endpoint | `GET /api/sound-generate` → `{ remainingToday, limit }` | TRD API CONTRACTS |
 | UI sizes | Rack 264 px (was 240); Mixer drawer 330 px tall, strips 84 px; `--ink-soft` `#5E5A53` for WCAG AA | UI_DESIGN |
+| Library playlists | `playlists` + `playlist_sounds` tables (migration `db/migrations/002_playlists.sql`, applied); `/api/playlists`; sound rename/copy/delete on `/api/sounds`; state in `src/store/library.ts`; `Menu` supports `submenu` | TRD DATABASE, API CONTRACTS |
 | Router | Own minimal router (`src/router.tsx`); no router dependency | — |
 | Dev-only routes | `/kit`, `/dev/magenta`, `/dev/audio` (excluded from production builds) | `src/App.tsx` |
 | vercel.json | Not needed: default region `iad1`, Hobby max duration 300 s | SETUP §5 |

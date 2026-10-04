@@ -30,3 +30,18 @@ CREATE INDEX IF NOT EXISTS sounds_tsv_idx ON sounds USING gin (tsv);
 CREATE INDEX IF NOT EXISTS sounds_created_idx ON sounds (created_at DESC);
 
 CREATE TABLE IF NOT EXISTS sound_usage (day date PRIMARY KEY, count int NOT NULL DEFAULT 0);
+
+-- Library playlists (added 2026-10-04; also in db/migrations/002_playlists.sql)
+CREATE TABLE IF NOT EXISTS playlists (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  name text NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS playlist_sounds (
+  playlist_id uuid NOT NULL REFERENCES playlists(id) ON DELETE CASCADE,
+  sound_id uuid NOT NULL REFERENCES sounds(id) ON DELETE CASCADE,
+  added_at timestamptz NOT NULL DEFAULT now(),
+  PRIMARY KEY (playlist_id, sound_id)
+);
+CREATE INDEX IF NOT EXISTS playlist_sounds_sound_idx ON playlist_sounds (sound_id);

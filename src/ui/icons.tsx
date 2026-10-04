@@ -33,3 +33,4 @@ export const WaveIcon = (p: P) => <Svg {...p}><path d="M2 8h1.5M4.5 5v6M7 3v10M9
 export const MixerIcon = (p: P) => <Svg {...p}><path d="M4 2.5v11M8 2.5v11M12 2.5v11" /><rect x="2.5" y="8.5" width="3" height="2" rx=".5" fill="currentColor" /><rect x="6.5" y="4.5" width="3" height="2" rx=".5" fill="currentColor" /><rect x="10.5" y="10" width="3" height="2" rx=".5" fill="currentColor" /></Svg>;
 export const SearchIcon = (p: P) => <Svg {...p}><circle cx="7" cy="7" r="4" /><path d="m10 10 3.5 3.5" /></Svg>;
 export const KeyboardIcon = (p: P) => <Svg {...p}><rect x="1.5" y="4" width="13" height="8" rx="1.5" /><path d="M4 7h.01M6.5 7h.01M9 7h.01M11.5 7h.01M5 9.5h6" /></Svg>;
+export const FolderIcon = (p: P) => <Svg {...p}><path d="M2 4.5A1.5 1.5 0 0 1 3.5 3H6l1.5 1.5h5A1.5 1.5 0 0 1 14 6v5.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 11.5z" /></Svg>;

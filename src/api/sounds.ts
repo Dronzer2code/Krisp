@@ -63,3 +63,15 @@ export function suggestNameAndTags(text: string): { name: string; tags: string[]
   const name = text.split(',')[0].trim().slice(0, 40) || 'New sound';
   return { name: name.charAt(0).toUpperCase() + name.slice(1), tags };
 }
+
+export async function renameSound(id: string, name: string, embedding?: number[]): Promise<SoundMeta> {
+  return (await apiJson<{ sound: SoundMeta }>(`/api/sounds?id=${encodeURIComponent(id)}`, { method: 'PATCH', body: JSON.stringify({ name, embedding }) })).sound;
+}
+
+export async function deleteSound(id: string): Promise<void> {
+  await apiJson(`/api/sounds?id=${encodeURIComponent(id)}`, { method: 'DELETE' });
+}
+
+export async function copySound(id: string, name?: string): Promise<SoundMeta> {
+  return (await apiJson<{ sound: SoundMeta }>(`/api/sounds?copyOf=${encodeURIComponent(id)}`, { method: 'POST', body: JSON.stringify(name ? { name } : {}) })).sound;
+}

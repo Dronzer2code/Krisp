@@ -210,7 +210,18 @@ CREATE INDEX IF NOT EXISTS sounds_tsv_idx ON sounds USING gin (tsv);
 CREATE INDEX IF NOT EXISTS sounds_created_idx ON sounds (created_at DESC);
 
 CREATE TABLE IF NOT EXISTS sound_usage (day date PRIMARY KEY, count int NOT NULL DEFAULT 0);
+
+-- Library playlists (added 2026-10-04; migration db/migrations/002_playlists.sql, applied to Tiger)
+CREATE TABLE IF NOT EXISTS playlists (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), name text NOT NULL, created_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE IF NOT EXISTS playlist_sounds (
+  playlist_id uuid NOT NULL REFERENCES playlists(id) ON DELETE CASCADE,
+  sound_id uuid NOT NULL REFERENCES sounds(id) ON DELETE CASCADE,
+  added_at timestamptz NOT NULL DEFAULT now(),
+  PRIMARY KEY (playlist_id, sound_id)
+);
 ```
+
+Playlists are folders for Sounds: a Sound can be in several; deleting a playlist keeps its Sounds; deleting a Sound removes it from every playlist. Library root = playlists + Sounds in no playlist ("Unsorted").
 
 `tsv` is a plain column because Tiger rejected the generated-column version (VERIFY-6). Every INSERT into `sounds` (`api/sounds.ts`, `api/sound-generate.ts`) MUST set it with `to_tsvector('english', coalesce($name,'') || ' ' || coalesce($prompt,'') || ' ' || array_to_string($tags::text[],' '))`, using the same parameters as the `name`, `prompt`, `tags` columns.
 
@@ -254,6 +265,14 @@ Common: JSON in/out (except audio). Header `x-app-passcode` required on every ro
 | `/api/sound-generate` | GET | — | `200 { remainingToday, limit }` (added 2026-10-03 so the Create tab can show the counter before generating, J4 step 5) | — |
 | `/api/sound-generate` | POST | `{ prompt, kind, durationSeconds, name, tags, embedding }` | `201 { sound, remainingToday }` | 400, 429 `daily_limit`, 502 `elevenlabs_error` |
 | `/api/sound-audio?id=` | GET | — | `200` bytes, `Content-Type` = stored mime, `Cache-Control: public, max-age=31536000, immutable` | 404 |
+| `/api/sounds?copyOf=` | POST | `{ name? }` | `201 { sound }` (copy: same audio, tags, embedding; default name "<name> copy") | 404 |
+| `/api/sounds?id=` | PATCH | `{ name, embedding? }` | `200 { sound }` (rename; `tsv` rebuilt; vector replaced when given) | 400, 404 |
+| `/api/sounds?id=` | DELETE | — | `200 { ok: true }` | 404 |
+| `/api/playlists` | GET | — | `200 { playlists: [{ id, name, created_at, sound_ids }] }` (name order) | — |
+| `/api/playlists` | POST | `{ name }` (1–60 chars) | `201 { playlist }` | 400 |
+| `/api/playlists?id=` | PATCH / DELETE | `{ name }` / — | `200 { playlist }` / `200 { ok: true }` (Sounds kept) | 400, 404 |
+| `/api/playlists?op=add\|remove` | POST | `{ playlistId, soundId }` | `200 { ok: true }` (add is idempotent) | 400, 404 |
+| `/api/playlists?op=move` | POST | `{ soundId, from: id \| null, to }` | `200 { ok: true }` (leave `from`, join `to`) | 400, 404 |
 | `/api/search` | POST | `{ q, embedding, kind?: 'ONE_SHOT'\|'LOOP' }` | `200 { results: (SoundMeta & {score, vector_hit, keyword_hit})[] }` | 400 |
 
 ### `/api/sound-generate` steps

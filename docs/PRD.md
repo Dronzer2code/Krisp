@@ -96,7 +96,7 @@ The user programs the selected Beat by hand on pads: toggle, drag-paint, per-ste
 The user arranges Beat clips and audio loop clips on Lanes snapped to bars: place by drag, move, resize (Beat clips repeat), duplicate, delete, select. Lanes can be added, renamed, deleted, reordered. Clips show previews (step mini-map or waveform). A loop region can be set on the ruler.
 
 ### F6 Sound Browser
-One place for sounds with four tabs: **Presets** (synth kit), **Create** (ElevenLabs one-shot or loop from a text description), **Upload** (own one-shots/loops), **Library** (all saved Sounds with search). Any Sound can be previewed and used: assigned to a Slot (one-shots) or placed on an AUDIO lane (loops).
+One place for sounds with four tabs: **Presets** (synth kit), **Create** (ElevenLabs one-shot or loop from a text description), **Upload** (own one-shots/loops), **Library** (all saved Sounds with search). Any Sound can be previewed and used: assigned to a Slot (one-shots) or placed on an AUDIO lane (loops). The Library groups Sounds into **playlists** (folders) shown above the unsorted Sounds; each Sound's ⋯ menu offers Rename, Make a copy, Add to playlist, Move to playlist and Delete (added 2026-10-04).
 
 ### F7 Hybrid search
 Describing a sound ("warm dusty kick", "808") finds it using vector similarity and keyword match together; each result shows which matched.
