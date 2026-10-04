@@ -12,7 +12,7 @@ Entry point for any coding agent working on Pocket. Read this file first. It def
 
 ## READ ORDER
 
-1. `CLAUDE.md` (this file)
+1. `CLAUDE.md` (this file), then `CONTEXT.md` — current build state, decisions, next actions
 2. `AGENT.md` — rules for writing any `.md` in this repo
 3. `docs/PRD.md` — what and why; feature IDs F1–F12; core concepts
 4. `docs/MVP.md` — must/should/may scope, acceptance criteria, demo scenario, cut-line
