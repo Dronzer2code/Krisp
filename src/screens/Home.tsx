@@ -118,7 +118,13 @@ export default function Home() {
       setItems(await listWorkspaces());
     } catch (err) {
       setItems([]);
-      setError(err instanceof ApiError && err.status === 401 ? 'Enter the studio passcode to see saved workspaces.' : 'Could not load workspaces. Check your connection.');
+      setError(
+        err instanceof ApiError && err.status === 401
+          ? 'Enter the studio passcode to see saved workspaces.'
+          : err instanceof ApiError && err.code === 'api_unavailable'
+            ? 'The API is not running. Start Pocket with “npx vercel dev” and open http://localhost:3000.'
+            : 'Could not load workspaces. Check your connection.',
+      );
     }
   }, []);
 

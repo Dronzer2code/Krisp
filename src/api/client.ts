@@ -77,5 +77,7 @@ export async function apiFetch(path: string, init: RequestInit = {}): Promise<Re
 
 export async function apiJson<T>(path: string, init: RequestInit = {}): Promise<T> {
   const res = await apiFetch(path, init);
+  // Under `npm run dev` (Vite only) /api/* returns source files, not JSON: the API is not running.
+  if (!(res.headers.get('content-type') ?? '').includes('application/json')) throw new ApiError(0, 'api_unavailable');
   return (await res.json()) as T;
 }
