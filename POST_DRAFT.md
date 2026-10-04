@@ -2,14 +2,14 @@
 title: The groove is the 40 milliseconds a grid throws away, so we built a beat studio that gives them back, in a browser tab
 published: true
 tags: devchallenge, weekendchallenge, hf26challenge
-cover_image: [[UPLOAD Blog images/00-cover.png TO DEV AND PASTE ITS URL]]
 ---
 
 *This is a submission for the [Hacktoberfest Weekend Challenge: Build for a Friend](https://dev.to/challenges/hacktoberfest-weekend-2026-10-01)*
 
 <!--
 EDITOR NOTES (delete before publishing)
-- Images: upload each file from "Blog images/" in the DEV editor and replace the relative path with the URL DEV gives you.
+- COVER IMAGE: in the DEV editor click "Add a cover image" and upload 00-cover.png from the "Blog images" folder.
+- IMAGES: wherever you see "ADD IMAGE HERE", click the image button in the DEV editor, upload that file from the "Blog images" folder, and delete the marker line.
 - Every [[ ]] is a placeholder. Fill it with something real or cut the sentence. Never invent a quote or a number.
 - Ask Anuv before publishing his name, his words or his face.
 -->
@@ -62,17 +62,17 @@ Six stops, in the order you meet them.
 
 #### 1 · The dashboard
 
-![Krisp home: workspace cards with beat-colour strips](Blog%20images/01-home-workspaces.png)
+**🖼️ ADD IMAGE HERE →** `01-home-workspaces.png` (from the "Blog images" folder) — *Krisp home: workspace cards with beat-colour strips*
 
 Every idea is a card. Its colour strip is the first six beats inside it, so a sketch is recognisable before you open it. Under the cards, a hand-lettered guide teaches the whole app with real controls you can touch.
 
-![Hand-lettered guide: eight steps from a blank page to a WAV](Blog%20images/03-guide-eight-steps.png)
+**🖼️ ADD IMAGE HERE →** `03-guide-eight-steps.png` (from the "Blog images" folder) — *Hand-lettered guide: eight steps from a blank page to a WAV*
 
 > **For Anuv:** his ideas stop living in voice memos and stray files. They are all one click from Home, and he never needs a manual.
 
 #### 2 · Creating a workspace
 
-![New workspace dialog: Empty plus eight preset beats with BPM and a mini pad map](Blog%20images/02-new-workspace-presets.png)
+**🖼️ ADD IMAGE HERE →** `02-new-workspace-presets.png` (from the "Blog images" folder) — *New workspace dialog: Empty plus eight preset beats with BPM and a mini pad map*
 
 Start empty, or from one of eight original patterns, each with its own tempo and swing.
 
@@ -80,7 +80,7 @@ Start empty, or from one of eight original patterns, each with its own tempo and
 
 #### 3 · The full workspace
 
-![The full workspace: transport, Rack, Beat Editor, Song timeline and sound library](Blog%20images/05-workspace-overview.png)
+**🖼️ ADD IMAGE HERE →** `05-workspace-overview.png` (from the "Blog images" folder) — *The full workspace: transport, Rack, Beat Editor, Song timeline and sound library*
 
 One screen: the transport on top, the Rack on the left, the Beat Editor in the centre, the Song underneath, Sounds and AI on the right. Saving is automatic. The LED goes amber, then green.
 
@@ -88,7 +88,7 @@ One screen: the transport on top, the Rack on the left, the Beat Editor in the c
 
 #### 4 · Left side: the Rack and the Beat Editor
 
-![Rack and Beat Editor: ten slots, sixteen steps, velocity shown as brightness](Blog%20images/06-rack-and-beat-editor.png)
+**🖼️ ADD IMAGE HERE →** `06-rack-and-beat-editor.png` (from the "Blog images" folder) — *Rack and Beat Editor: ten slots, sixteen steps, velocity shown as brightness*
 
 Each Rack row is one sound, with tune, mute, solo and a preview pad, and it *is* the row header of the grid beside it: same height, same order. Click to place a hit, drag to paint a row, Shift-click for a ghost note or an accent, or hit REC and play it in from the keyboard.
 
@@ -96,7 +96,7 @@ Each Rack row is one sound, with tune, mute, solo and a preview pad, and it *is*
 
 #### 5 · Right side: Sounds and AI
 
-![Library: playlists above unsorted sounds, each with an options menu](Blog%20images/10-library-playlists.png)
+**🖼️ ADD IMAGE HERE →** `10-library-playlists.png` (from the "Blog images" folder) — *Library: playlists above unsorted sounds, each with an options menu*
 
 Four tabs: Presets, Create (ElevenLabs), Upload and Library. The Library sorts sounds into playlists and searches by name or by vibe. The AI tab next to it holds Humanize, Variations, Continue and Morph (Stage 4 below).
 
@@ -104,7 +104,7 @@ Four tabs: Presets, Create (ElevenLabs), Upload and Library. The Library sorts s
 
 #### 6 · The mixer
 
-![Mixer drawer: ten channel strips, reverb return and master section](Blog%20images/08-mixer.png)
+**🖼️ ADD IMAGE HERE →** `08-mixer.png` (from the "Blog images" folder) — *Mixer drawer: ten channel strips, reverb return and master section*
 
 Press **M**. Every sound gets a strip with EQ, reverb send, pan and fader. Then a reverb return, and a master with a compressor, gain-reduction LEDs and a limiter.
 
@@ -114,7 +114,7 @@ Press **M**. Every sound gets a strip with EQ, reverb send, pan and fader. Then 
 
 **Live:** https://krisp.vercel.app
 
-[[VIDEO: 2–3 min, Anuv building a tune and exporting it. Paste with {% embed <url> %}]]
+[[VIDEO: 2–3 min, Anuv building a tune and exporting it. Paste the embed tag with your YouTube link here]]
 
 Saving and the sound library sit behind a studio passcode, because ElevenLabs credits cost money. The video shows them. Everything in the next list works without it.
 
@@ -185,7 +185,7 @@ export function hitTime(tickTime: number, stepIndex: number, step: { offset: num
 
 The Transport never loops. The loop region is applied by one more pure function, `wrapTick`, so drum hits and audio clips are triggered by the **same** per-tick code and can't drift apart.
 
-![Song timeline: Lo-fi, Drum & Bass and Boom Bap clips on three beat lanes](Blog%20images/07-song-arrangement.png)
+**🖼️ ADD IMAGE HERE →** `07-song-arrangement.png` (from the "Blog images" folder) — *Song timeline: Lo-fi, Drum & Bass and Boom Bap clips on three beat lanes*
 
 ### Stage 3: the export is not a second renderer
 
@@ -203,7 +203,7 @@ const rendered = await Tone.Offline(async (ctx) => {
 
 A 16-bar song at 90 BPM is 42.7 s of music. With a 2 s reverb tail, it rendered in **16.1 s** on that GPU-less laptop, about 2.7× faster than real time. It also followed the arrangement exactly: audio in bars 1–4, then RMS **0.000000** after.
 
-![Export dialog: WAV through the full mixer, or MIDI on drum channel 10](Blog%20images/12-export.png)
+**🖼️ ADD IMAGE HERE →** `12-export.png` (from the "Blog images" folder) — *Export dialog: WAV through the full mixer, or MIDI on drum channel 10*
 
 ### Stage 4: the AI never writes the beat for you
 
@@ -218,15 +218,15 @@ Most AI music tools generate the song. Krisp's AI only touches the beat you made
 
 Before Humanize, every hit sits dead on the grid:
 
-![Before Humanize: hits exactly on the grid](Blog%20images/16-ai-before-humanize.png)
+**🖼️ ADD IMAGE HERE →** `16-ai-before-humanize.png` (from the "Blog images" folder) — *Before Humanize: hits exactly on the grid*
 
 After, the same hits, nothing added or removed. Velocities changed (brightness), and each dot is a microtiming offset the model put there:
 
-![After Humanize: same steps, new velocities, microtiming dots inside the pads](Blog%20images/17-ai-after-humanize.png)
+**🖼️ ADD IMAGE HERE →** `17-ai-after-humanize.png` (from the "Blog images" folder) — *After Humanize: same steps, new velocities, microtiming dots inside the pads*
 
 Variations are previewed by *holding* a candidate. It plays in place of your beat for as long as you hold it, without touching the beat or the undo history.
 
-![Variations: four candidates, hold one to hear it, then Apply or Add as new beat](Blog%20images/18-ai-variations.png)
+**🖼️ ADD IMAGE HERE →** `18-ai-variations.png` (from the "Blog images" folder) — *Variations: four candidates, hold one to hear it, then Apply or Add as new beat*
 
 Two facts I only learned by running the models are now built into the converter:
 
@@ -239,7 +239,7 @@ And one I had to design around: Snare and Clap share drum pitch 38. A model's sn
 
 Digging through sample packs is search over things that already exist. ElevenLabs makes the thing that doesn't. That's a different job, and it changes the workflow: the producer says what they hear, and the sound turns up on a pad.
 
-![Create tab: the exact prompt sent to ElevenLabs is shown under the field, with today's remaining generations](Blog%20images/09-elevenlabs-create.png)
+**🖼️ ADD IMAGE HERE →** `09-elevenlabs-create.png` (from the "Blog images" folder) — *Create tab: the exact prompt sent to ElevenLabs is shown under the field, with today's remaining generations*
 
 Krisp shapes the request and **shows you exactly what it sends**, so nothing is hidden behind a magic box:
 
@@ -263,7 +263,7 @@ POST https://api.elevenlabs.io/v1/sound-generation?output_format=mp3_44100_128
 
 The two generated sounds in this library came back at **1.3 s** each. In the browser they are trimmed of silence, faded, peak-normalised to −1 dBFS, embedded, and filed next to uploads:
 
-![Upload: drop your own WAV, MP3 or OGG up to 3 MB](Blog%20images/11-upload.png)
+**🖼️ ADD IMAGE HERE →** `11-upload.png` (from the "Blog images" folder) — *Upload: drop your own WAV, MP3 or OGG up to 3 MB*
 
 ### Stage 6: Tiger Data, one Postgres with three kinds of memory
 
@@ -298,7 +298,7 @@ The library is organised the way producers organise folders: **playlists**, wher
 
 This is the whole schema on Tiger Data, live:
 
-![Tiger Data console: five Postgres tables — sounds, workspaces, playlist_sounds, playlists, sound_usage](Blog%20images/13-tiger-data-tables.png)
+**🖼️ ADD IMAGE HERE →** `13-tiger-data-tables.png` (from the "Blog images" folder) — *Tiger Data console: five Postgres tables — sounds, workspaces, playlist_sounds, playlists, sound_usage*
 
 #### Everything Tiger Data is actually doing here
 
@@ -315,11 +315,11 @@ This is the whole schema on Tiger Data, live:
 
 A project built with an AI agent has a second artefact besides the code: the reasoning that produced it. Entire keeps it. We ran `entire enable --agent claude-code --import-history`. That installed Claude Code hooks, and it also **imported the session that had started before Entire was set up**, so nothing from the first hour was lost. Since then, every `git push origin` uploads the session checkpoints next to the commits they produced. The repository itself lives on Entire (`origin`), mirrored to GitHub for Vercel.
 
-![Entire repository overview: 36 commits in the past month, split Claude Code and manual, two contributors](Blog%20images/14-entire-repo-overview.png)
+**🖼️ ADD IMAGE HERE →** `14-entire-repo-overview.png` (from the "Blog images" folder) — *Entire repository overview: 36 commits in the past month, split Claude Code and manual, two contributors*
 
 Entire's own numbers for this repo: **36 commits**, **7 checkpoints**, **15 messages**, **591.3k tokens** (996 in, 590.3k out), about **84.5k tokens per checkpoint**.
 
-![Entire analytics: checkpoints, throughput, messages and token usage over the build](Blog%20images/15-entire-analytics.png)
+**🖼️ ADD IMAGE HERE →** `15-entire-analytics.png` (from the "Blog images" folder) — *Entire analytics: checkpoints, throughput, messages and token usage over the build*
 
 That is what made the "verbatim errors" table below possible. Every failure, and the reasoning that fixed it, is on record rather than reconstructed from memory.
 
