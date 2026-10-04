@@ -1,8 +1,8 @@
-# CONTEXT.md — Pocket build state
+# CONTEXT.md — Krisp build state
 
 ## PURPOSE
 
-Hand-off snapshot for any agent session that continues building Pocket. States what exists, what was decided during the build (including deviations from the spec), how to run and verify, and what is still open. Read after `CLAUDE.md`; the specs in `docs/` remain the source of truth for requirements.
+Hand-off snapshot for any agent session that continues building Krisp. States what exists, what was decided during the build (including deviations from the spec), how to run and verify, and what is still open. Read after `CLAUDE.md`; the specs in `docs/` remain the source of truth for requirements.
 
 Last updated: 2026-10-04 (latest commit `3821c5b` before this file).
 

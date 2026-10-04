@@ -35,7 +35,7 @@ export default function KitDemo() {
   return (
     <main className="mx-auto flex max-w-5xl flex-col gap-s5 p-s5">
       <Panel label="Kit" screws className="px-s6 py-s4">
-        <h1 className="font-display text-[22px] tracking-[.12em]">POCKET · KIT</h1>
+        <h1 className="font-display text-[22px] tracking-[.12em]">KRISP · KIT</h1>
         <p className="label mt-s1">UI primitives (dev only)</p>
       </Panel>
 

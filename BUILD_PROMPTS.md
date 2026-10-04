@@ -1,8 +1,8 @@
-# BUILD_PROMPTS.md — Pocket
+# BUILD_PROMPTS.md — Krisp
 
 ## PURPOSE
 
-Ordered prompts the humans paste into Claude Code to build Pocket. Each prompt maps to tasks in `docs/TASKS.md`. Send the next prompt only after the agent reports the previous checkpoint.
+Ordered prompts the humans paste into Claude Code to build Krisp. Each prompt maps to tasks in `docs/TASKS.md`. Send the next prompt only after the agent reports the previous checkpoint.
 
 ## CONTEXT
 
@@ -19,7 +19,7 @@ Read CLAUDE.md, AGENT.md and every file in docs/ before doing anything.
 2. Make sure CLAUDE.md, AGENT.md, BUILD_PROMPTS.md and docs/ are in the project root. Delete any old POCKET_SPEC.md.
 3. Entire: set up Entire for this repo per docs/SETUP.md §1 using only commands verified in https://docs.entire.io. If you cannot verify them, give me the exact manual steps instead.
 4. Scaffold per docs/TRD.md → STACK and REPOSITORY LAYOUT (Vite, React 18, TS, Tailwind, zustand, tone, @tonejs/midi, @magenta/music, @huggingface/transformers, pg, vitest). Add .env.example, .gitignore, scripts/check-secrets.sh, src/theme/tokens.css from docs/UI_DESIGN.md, fonts.
-5. Home placeholder renders a Panel with "POCKET".
+5. Home placeholder renders a Panel with "KRISP".
 Report status of each step. Commit "chore(T0): scaffold".
 ```
 
@@ -131,7 +131,7 @@ Implement SHOULD items from docs/MVP.md in reverse cut-line order (most valuable
 ## PROMPT 14 — Polish (both, T15)
 
 ```text
-Audit the app against docs/UI_DESIGN.md (principles, spacing, labels, focus rings, motion, reduced motion, empty states, copy, responsive breakpoints). List issues, fix them, no new features. Update README.md (what Pocket is, live URL, setup, credits for Magenta.js, Tone.js, transformers.js, all-MiniLM-L6-v2, @tonejs/midi, "Commits after deadline" section). Commit.
+Audit the app against docs/UI_DESIGN.md (principles, spacing, labels, focus rings, motion, reduced motion, empty states, copy, responsive breakpoints). List issues, fix them, no new features. Update README.md (what Krisp is, live URL, setup, credits for Magenta.js, Tone.js, transformers.js, all-MiniLM-L6-v2, @tonejs/midi, "Commits after deadline" section). Commit.
 ```
 
 ## PROMPT 15 — Post draft (both, T17)

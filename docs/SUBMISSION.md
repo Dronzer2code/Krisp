@@ -1,8 +1,8 @@
-# SUBMISSION.md — Pocket
+# SUBMISSION.md — Krisp
 
 ## PURPOSE
 
-Defines the DEV post that submits Pocket: required structure and tags, title options, evidence per prize category, the open-innovation section, writing rules aligned with judging, and compliance checks. Used by task T17 in `docs/TASKS.md`.
+Defines the DEV post that submits Krisp: required structure and tags, title options, evidence per prize category, the open-innovation section, writing rules aligned with judging, and compliance checks. Used by task T17 in `docs/TASKS.md`.
 
 ## CONTEXT
 
@@ -33,7 +33,7 @@ Sections in order:
 
 | Section | Content |
 |---|---|
-| `## What I Built` | Open with the friend (name only with permission) and one concrete moment of his problem (e.g., an idea lost because he wasn't at his DAW; hours digging for one kick). Then Pocket in 3–4 sentences. |
+| `## What I Built` | Open with the friend (name only with permission) and one concrete moment of his problem (e.g., an idea lost because he wasn't at his DAW; hours digging for one kick). Then Krisp in 3–4 sentences. |
 | `## Demo` | Live Vercel URL + 2–3 min video following `docs/MVP.md` → DEMO SCENARIO. Do not publish the passcode; say the library is passcode-protected and the video shows it. |
 | `## Code` | Embedded GitHub repo; note it was created during the challenge window. |
 | `## How I Built It` | One architecture diagram (browser does music + AI; `/api` + Tiger + ElevenLabs), then short subsections: Magenta.js (open AI), ElevenLabs, Tiger Data hybrid search, the audio engine and offline export, the skeuomorphic UI. One hard decision in depth (recommended: scheduling with look-ahead and reusing the same engine for offline WAV export so the export matches playback). |
@@ -47,7 +47,7 @@ Sections in order:
 ## TITLE OPTIONS
 
 - "My friend makes beats. I built him a pocket studio where the AI runs in his browser."
-- "Pocket: a hardware-feel beat workspace for my producer friend (Magenta in the browser + ElevenLabs + Tiger hybrid search)"
+- "Krisp: a hardware-feel beat workspace for my producer friend (Magenta in the browser + ElevenLabs + Tiger hybrid search)"
 - "I built my friend the beat sketchpad he actually wanted: tap, humanize, arrange, export"
 
 ## EVIDENCE CHECKLIST
@@ -72,7 +72,7 @@ Store screenshots/GIFs in `docs/evidence/`.
 - [ ] Note: models load once from public checkpoints and run locally.
 
 ### Theme
-- [ ] Friend using Pocket on camera; quote; what he exported to his DAW.
+- [ ] Friend using Krisp on camera; quote; what he exported to his DAW.
 
 ## OPEN INNOVATION SECTION
 

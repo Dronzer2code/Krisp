@@ -90,9 +90,9 @@ export default function Workspace({ id }: { id: string }) {
   useEffect(() => warmUpOnFirstGesture(), []);
 
   useEffect(() => {
-    document.title = `${name} · Pocket`;
+    document.title = `${name} · Krisp`;
     return () => {
-      document.title = 'Pocket';
+      document.title = 'Krisp';
     };
   }, [name]);
 

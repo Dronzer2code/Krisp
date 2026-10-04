@@ -1,8 +1,8 @@
-# PROCESS_FLOW.md — Pocket
+# PROCESS_FLOW.md — Krisp
 
 ## PURPOSE
 
-Defines how Pocket behaves over time: user journeys step by step, system flows between browser, `/api`, Tiger Data and ElevenLabs, and the state machines for transport, saving, sound creation, uploads and AI model loading.
+Defines how Krisp behaves over time: user journeys step by step, system flows between browser, `/api`, Tiger Data and ElevenLabs, and the state machines for transport, saving, sound creation, uploads and AI model loading.
 Concepts and features: `docs/PRD.md`. Contracts and modules: `docs/TRD.md`. Screens and components: `docs/UI_DESIGN.md`.
 
 ## CONTEXT

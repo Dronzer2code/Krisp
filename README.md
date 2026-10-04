@@ -1,6 +1,6 @@
-# Pocket — a beat workspace that runs in the browser
+# Krisp — a beat workspace that runs in the browser
 
-Pocket is a calm, hardware-feel beat workspace built for one producer friend. Make beats by hand on a step
+Krisp is a calm, hardware-feel beat workspace built for one producer friend. Make beats by hand on a step
 sequencer, arrange them into a song, mix them with channel strips and a master chain, and export WAV and MIDI for
 your DAW. Open-source AI (Magenta.js) runs **in your browser** to humanize and vary your own beats. ElevenLabs
 creates the exact one-shot or loop you describe, and a Tiger Data hybrid search finds any sound again by its
@@ -45,7 +45,7 @@ Database: run [`db/schema.sql`](db/schema.sql) once in the Tiger Data SQL editor
 
 ## Credits
 
-Pocket stands on these open-source projects and models:
+Krisp stands on these open-source projects and models:
 
 - [Magenta.js](https://github.com/magenta/magenta-js) (Apache-2.0) — MusicVAE, GrooVAE and DrumRNN checkpoints, trained on the open Groove MIDI Dataset
 - [Tone.js](https://github.com/Tonejs/Tone.js) (MIT) — audio engine, transport and offline rendering

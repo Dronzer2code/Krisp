@@ -67,7 +67,7 @@ export async function renderMix(w: Workspace, range: WavRange): Promise<AudioBuf
 }
 
 export function safeFileName(s: string): string {
-  return s.trim().replace(/[^\w\- ]+/g, '').replace(/\s+/g, '-').slice(0, 60) || 'pocket';
+  return s.trim().replace(/[^\w\- ]+/g, '').replace(/\s+/g, '-').slice(0, 60) || 'krisp';
 }
 
 export async function exportWav(w: Workspace, range: WavRange): Promise<{ blob: Blob; filename: string; seconds: number }> {

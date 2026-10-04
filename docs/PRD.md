@@ -1,8 +1,8 @@
-# PRD.md — Pocket
+# PRD.md — Krisp
 
 ## PURPOSE
 
-Defines WHAT Pocket is, WHY it exists, WHO it serves and WHAT each feature must do from the user's point of view.
+Defines WHAT Krisp is, WHY it exists, WHO it serves and WHAT each feature must do from the user's point of view.
 Minimum scope and acceptance criteria: `docs/MVP.md`. Implementation: `docs/TRD.md`. Journeys and flows: `docs/PROCESS_FLOW.md`. Visual design: `docs/UI_DESIGN.md`.
 
 ## CONTEXT
@@ -17,16 +17,16 @@ Minimum scope and acceptance criteria: `docs/MVP.md`. Implementation: `docs/TRD.
 
 ### Prize categories targeted
 
-| Category | Prize | How Pocket qualifies |
+| Category | Prize | How Krisp qualifies |
 |---|---|---|
 | Best Use of ElevenLabs | $100 | Sound Effects API generates the friend's custom one-shots and loops inside the workflow |
 | Best Use of Tiger Data | $100 | pgvector + keyword hybrid search over the sound library; Workspaces stored in Postgres |
-| Best Use of Entire | $100 | Agent sessions that built Pocket are shared in the write-up |
+| Best Use of Entire | $100 | Agent sessions that built Krisp are shared in the write-up |
 | Overall | $250 | Story, writing, execution |
 
 ### Differentiation (submissions checked 2026-10-03)
 
-Crowded areas to avoid: recipes from voice memos, language practice, medicine schedules, expense tracking, study tools, task-paralysis coaches, accessibility checkers, voice generation for narration. No submission found for a beat-making workspace. Plain web drum machines exist outside the challenge; Pocket differs through: a full workspace (Beats → Song → Mixer → Export) in one calm hardware-style UI, open-source AI acting on the user's own beats, custom sound creation with ElevenLabs, and a searchable personal sound library.
+Crowded areas to avoid: recipes from voice memos, language practice, medicine schedules, expense tracking, study tools, task-paralysis coaches, accessibility checkers, voice generation for narration. No submission found for a beat-making workspace. Plain web drum machines exist outside the challenge; Krisp differs through: a full workspace (Beats → Song → Mixer → Export) in one calm hardware-style UI, open-source AI acting on the user's own beats, custom sound creation with ElevenLabs, and a searchable personal sound library.
 
 ## PROBLEM
 

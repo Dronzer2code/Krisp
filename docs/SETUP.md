@@ -1,8 +1,8 @@
-# SETUP.md — Pocket
+# SETUP.md — Krisp
 
 ## PURPOSE
 
-Human and agent setup steps for every account, key and environment Pocket needs, in dependency order, plus smoke tests. Implements task T0/T0b in `docs/TASKS.md`.
+Human and agent setup steps for every account, key and environment Krisp needs, in dependency order, plus smoke tests. Implements task T0/T0b in `docs/TASKS.md`.
 
 ## CONTEXT
 
@@ -25,7 +25,7 @@ Human and agent setup steps for every account, key and environment Pocket needs,
 - Repository source: the Entire repository `/et/krisp/krisp`, git remote `origin` (`entire://aws-ap-south-1.entire.io/et/krisp/krisp`). Mirrored to GitHub at git remote `github` (`https://github.com/Dronzer2code/Krisp.git`) for Vercel. Rules: `CLAUDE.md` → REPOSITORY SOURCE.
 - Every commit is pushed to both remotes: `git push origin main` then `git push github main`.
 - The GitHub repository MUST be public before deploy (Vercel import + post embed).
-- **Entire:** create an account and follow https://docs.entire.io to capture the Claude Code sessions used to build Pocket for this repository. Verified 2026-10-03 (https://docs.entire.io/agents/claude-code and `entire enable --help`, CLI 0.11.3): `entire enable --agent claude-code` (repo setup + Claude Code hooks; `entire agent add claude-code` installs hooks only, into `.claude/settings.json`). DONE 2026-10-03: ran `entire enable --agent claude-code --import-history` → 8 Claude Code hooks in `.claude/settings.json`, project config `.entire/settings.json` (checkpoints stored as git refs), the first build session imported. Checkpoints sync to remote `origin` on `git push origin`. Every teammate's machine needs the Entire CLI on PATH (`entire login`) or its hooks silently do nothing. Keep the session links for `docs/SUBMISSION.md`.
+- **Entire:** create an account and follow https://docs.entire.io to capture the Claude Code sessions used to build Krisp for this repository. Verified 2026-10-03 (https://docs.entire.io/agents/claude-code and `entire enable --help`, CLI 0.11.3): `entire enable --agent claude-code` (repo setup + Claude Code hooks; `entire agent add claude-code` installs hooks only, into `.claude/settings.json`). DONE 2026-10-03: ran `entire enable --agent claude-code --import-history` → 8 Claude Code hooks in `.claude/settings.json`, project config `.entire/settings.json` (checkpoints stored as git refs), the first build session imported. Checkpoints sync to remote `origin` on `git push origin`. Every teammate's machine needs the Entire CLI on PATH (`entire login`) or its hooks silently do nothing. Keep the session links for `docs/SUBMISSION.md`.
 
 ## 2 TIGER DATA
 

@@ -123,7 +123,7 @@ export default function Home() {
         err instanceof ApiError && err.status === 401
           ? 'Enter the studio passcode to see saved workspaces.'
           : err instanceof ApiError && err.code === 'api_unavailable'
-            ? 'The API is not running. Start Pocket with “npx vercel dev” and open http://localhost:3000.'
+            ? 'The API is not running. Start Krisp with “npx vercel dev” and open http://localhost:3000.'
             : 'Could not load workspaces. Check your connection.',
       );
     }
@@ -145,9 +145,9 @@ export default function Home() {
 
   return (
     <main className="mx-auto flex min-h-screen max-w-6xl flex-col gap-s5 p-s4 mid:p-s6">
-      <Panel label="Pocket" screws className="flex items-end justify-between px-s6 py-s5">
+      <Panel label="Krisp" screws className="flex items-end justify-between px-s6 py-s5">
         <div>
-          <h1 className="font-display text-[30px] font-medium tracking-[.14em] text-ink">POCKET</h1>
+          <h1 className="font-display text-[30px] font-medium tracking-[.14em] text-ink">KRISP</h1>
           <p className="label mt-s1">beat workspace</p>
         </div>
         <button className="btn btn-primary" onClick={() => setCreating(true)}><PlusIcon /> New workspace</button>

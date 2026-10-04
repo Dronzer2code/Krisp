@@ -1,12 +1,12 @@
-# CLAUDE.md — Pocket
+# CLAUDE.md — Krisp
 
 ## PURPOSE
 
-Entry point for any coding agent working on Pocket. Read this file first. It defines read order, working rules, commands and the definition of done.
+Entry point for any coding agent working on Krisp. Read this file first. It defines read order, working rules, commands and the definition of done.
 
 ## CONTEXT
 
-- **Pocket** is a browser beat workspace with a minimal skeuomorphic (studio-hardware) UI. A producer creates Workspaces, builds Beats manually on a step sequencer with preset and custom sounds, arranges Beats and audio loops into a Song, mixes with channel strips and a master chain, uses open-source AI (Magenta.js, in the browser) to humanize and vary beats, generates sounds with ElevenLabs, uploads his own sounds, and exports WAV/MIDI.
+- **Krisp** is a browser beat workspace with a minimal skeuomorphic (studio-hardware) UI. A producer creates Workspaces, builds Beats manually on a step sequencer with preset and custom sounds, arranges Beats and audio loops into a Song, mixes with channel strips and a master chain, uses open-source AI (Magenta.js, in the browser) to humanize and vary beats, generates sounds with ElevenLabs, uploads his own sounds, and exports WAV/MIDI.
 - Built for the DEV "Hacktoberfest Weekend Challenge: Build for a Friend". Hard deadline **2026-10-05T06:59:00Z**. Code freeze target **2026-10-04T23:00:00Z**.
 - Built for one real friend (a beat producer). Name: UNKNOWN.
 

@@ -1,13 +1,13 @@
-# UI_DESIGN.md — Pocket
+# UI_DESIGN.md — Krisp
 
 ## PURPOSE
 
-Defines Pocket's visual and interaction design: the minimal skeuomorphic style, design tokens, UI primitives with sizes and states, screen layouts, responsive behaviour, motion, accessibility, and UI copy.
+Defines Krisp's visual and interaction design: the minimal skeuomorphic style, design tokens, UI primitives with sizes and states, screen layouts, responsive behaviour, motion, accessibility, and UI copy.
 Screens implement features from `docs/PRD.md`; component file names are in `docs/TRD.md` → REPOSITORY LAYOUT.
 
 ## CONTEXT
 
-- Style: **minimal skeuomorphism** — Pocket looks like a calm, well-made piece of studio hardware. Controls feel physical (pads, knobs, faders, LEDs, an LCD), but the layout is sparse.
+- Style: **minimal skeuomorphism** — Krisp looks like a calm, well-made piece of studio hardware. Controls feel physical (pads, knobs, faders, LEDs, an LCD), but the layout is sparse.
 - One mode only. Every feature is reachable from the single Workspace screen.
 
 ## DESIGN PRINCIPLES
@@ -88,7 +88,7 @@ Icons: inline SVG, 1.5 px stroke, `--ink`, 16 px (play, stop, loop, record, undo
 
 ### Home (`screens/Home.tsx`)
 
-- Background `--bg`. Header Panel: wordmark "POCKET" in `--font-display`, small subtitle "beat workspace".
+- Background `--bg`. Header Panel: wordmark "KRISP" in `--font-display`, small subtitle "beat workspace".
 - Grid of Workspace "cartridges": Panel cards 220×140 px: name (title), last edited (label), a 6-segment strip of Beat colours, ⋯ menu (Rename, Duplicate, Delete).
 - First card is always **New workspace** (dashed sunken outline, large plus).
 - Empty state: centred Panel "No workspaces yet — start one and hear a beat in seconds." + New workspace button.

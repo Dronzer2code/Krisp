@@ -29,11 +29,11 @@ The single most common mistake in a multi-sponsor project is using each sponsor 
 | **ElevenLabs** | Produce a sound that exists in no sample pack, from a sentence |
 | **Entire** | Keep the agent's reasoning next to the commit it produced, so the build itself is reviewable |
 
-My friend **Anuv** makes beats, and his ideas don't wait for him to be at his setup. [[ONE TRUE SENTENCE IN HIS WORDS ABOUT A LOST IDEA OR A NIGHT OF SAMPLE-PACK DIGGING]] Pocket is what we built him.
+My friend **Anuv** makes beats, and his ideas don't wait for him to be at his setup. [[ONE TRUE SENTENCE IN HIS WORDS ABOUT A LOST IDEA OR A NIGHT OF SAMPLE-PACK DIGGING]] Krisp is what we built him.
 
 ## What I Built
 
-**Pocket** is a minimal, hardware-feel beat studio in a browser tab. You tap a beat on pads, give it feel with velocity and swing, let an open-source model humanize it or offer four variations, describe a sound and get it, find any sound again by its vibe, arrange beats into a song, mix it through a real master chain, and export a WAV, or MIDI for your DAW.
+**Krisp** is a minimal, hardware-feel beat studio in a browser tab. You tap a beat on pads, give it feel with velocity and swing, let an open-source model humanize it or offer four variations, describe a sound and get it, find any sound again by its vibe, arrange beats into a song, mix it through a real master chain, and export a WAV, or MIDI for your DAW.
 
 ```
  pads, keys --> zustand store --> scheduler -------> Tone.js engine --> speakers
@@ -62,7 +62,7 @@ Six stops, in the order you meet them.
 
 #### 1 · The dashboard
 
-![Pocket home: workspace cards with beat-colour strips](Blog%20images/01-home-workspaces.png)
+![Krisp home: workspace cards with beat-colour strips](Blog%20images/01-home-workspaces.png)
 
 Every idea is a card. Its colour strip is the first six beats inside it, so a sketch is recognisable before you open it. Under the cards, a hand-lettered guide teaches the whole app with real controls you can touch.
 
@@ -108,7 +108,7 @@ Four tabs: Presets, Create (ElevenLabs), Upload and Library. The Library sorts s
 
 Press **M**. Every sound gets a strip with EQ, reverb send, pan and fader. Then a reverb return, and a master with a compressor, gain-reduction LEDs and a limiter.
 
-> **For Anuv:** a sketch leaves Pocket already mixed, so the WAV he sends sounds finished, not like a demo.
+> **For Anuv:** a sketch leaves Krisp already mixed, so the WAV he sends sounds finished, not like a demo.
 
 ## Demo
 
@@ -130,13 +130,13 @@ Saving and the sound library sit behind a studio passcode, because ElevenLabs cr
 
 Drop that WAV into Audacity and zoom into the hi-hats. At 90 BPM with 50% swing, every second hat must land about **41 ms** late, and the even ones must not move.
 
-When I ran exactly this against Pocket's own export, the odd hats landed **0.24 of a step** late (40 ms against the formula's 41.7 ms) and the even hats moved by less than 0.02 of a step. That is how you know the WAV is the same engine you were listening to, and not a re-implementation of it.
+When I ran exactly this against Krisp's own export, the odd hats landed **0.24 of a step** late (40 ms against the formula's 41.7 ms) and the even hats moved by less than 0.02 of a step. That is how you know the WAV is the same engine you were listening to, and not a re-implementation of it.
 
 ## Code
 
 {% github Dronzer2code/Krisp %}
 
-Created inside the challenge window (first commit 2026-10-03). Open-source work Pocket stands on is credited in the README: **Magenta.js**, **Tone.js**, **transformers.js** with **all-MiniLM-L6-v2**, **@tonejs/midi**, **pgvector**, and **Petaluma Script** for the hand-lettered guide.
+Created inside the challenge window (first commit 2026-10-03). Open-source work Krisp stands on is credited in the README: **Magenta.js**, **Tone.js**, **transformers.js** with **all-MiniLM-L6-v2**, **@tonejs/midi**, **pgvector**, and **Petaluma Script** for the hand-lettered guide.
 
 ### Run it yourself
 
@@ -168,7 +168,7 @@ The rule behind every row: **anything musical happens in the browser and never w
 
 ### Stage 2: the scheduler is three pure functions
 
-A drum machine in a browser is a timing problem before it's anything else. All of Pocket's timing is three functions you can unit-test without a sound card:
+A drum machine in a browser is a timing problem before it's anything else. All of Krisp's timing is three functions you can unit-test without a sound card:
 
 ```ts
 export const stepSeconds = (bpm: number) => 60 / bpm / 4;
@@ -207,7 +207,7 @@ A 16-bar song at 90 BPM is 42.7 s of music. With a 2 s reverb tail, it rendered 
 
 ### Stage 4: the AI never writes the beat for you
 
-Most AI music tools generate the song. Pocket's AI only touches the beat you made, and every result is one undo away.
+Most AI music tools generate the song. Krisp's AI only touches the beat you made, and every result is one undo away.
 
 | Tool | Open checkpoint | What it is allowed to change |
 |---|---|---|
@@ -230,8 +230,8 @@ Variations are previewed by *holding* a candidate. It plays in place of your bea
 
 Two facts I only learned by running the models are now built into the converter:
 
-- MusicVAE and DrumRNN return quantized notes with **velocity unset**. It reads as 0, so Pocket defaults it to 100.
-- GrooVAE returns **unquantized** notes: a start time, not a step. Pocket recovers the step as `round(startTime / stepSeconds)` and keeps the remainder as an offset clamped to ±½ step. That remainder *is* the groove.
+- MusicVAE and DrumRNN return quantized notes with **velocity unset**. It reads as 0, so Krisp defaults it to 100.
+- GrooVAE returns **unquantized** notes: a start time, not a step. Krisp recovers the step as `round(startTime / stepSeconds)` and keeps the remainder as an offset clamped to ±½ step. That remainder *is* the groove.
 
 And one I had to design around: Snare and Clap share drum pitch 38. A model's snare notes would wipe out the clap row, so model notes go to the **first** slot with a pitch and the rest keep their own steps.
 
@@ -241,7 +241,7 @@ Digging through sample packs is search over things that already exist. ElevenLab
 
 ![Create tab: the exact prompt sent to ElevenLabs is shown under the field, with today's remaining generations](Blog%20images/09-elevenlabs-create.png)
 
-Pocket shapes the request and **shows you exactly what it sends**, so nothing is hidden behind a magic box:
+Krisp shapes the request and **shows you exactly what it sends**, so nothing is hidden behind a magic box:
 
 ```
 ONE_SHOT  "<your words>, single drum one-shot, isolated, dry, no music"
@@ -343,7 +343,7 @@ That is what made the "verbatim errors" table below possible. Every failure, and
 Four concrete reasons, each one measured or tested:
 
 1. **The beat never leaves the device.** I ran the whole AI test suite with **every `/api` request blocked** in the browser. Humanize, Variations, Continue and Morph all passed.
-2. **It costs nothing to run.** No per-request inference bill for the AI. The only metered call in Pocket is ElevenLabs, and it's explicit and capped per day.
+2. **It costs nothing to run.** No per-request inference bill for the AI. The only metered call in Krisp is ElevenLabs, and it's explicit and capped per day.
 3. **Open means inspectable.** I only found out that GrooVAE returns unquantized start times, and that the VAE leaves velocity at 0, *because* the checkpoints and the library are open. A closed API would have handed back a groove I couldn't explain.
 4. **Once loaded, it is always there.** The cold cost is real: the drums VAE loaded in **14.2 s** and the first Humanize took **15 s**, both on a GPU-less machine. Both happen once. [[MEASURE: warm Humanize time on Anuv's laptop]]
 
@@ -378,7 +378,7 @@ The same pattern (a pure scheduler, one engine for live and offline, open models
 
 ## My Agent Session
 
-Pocket was built with Claude Code and captured with Entire (see Stage 7):
+Krisp was built with Claude Code and captured with Entire (see Stage 7):
 
 [[ENTIRE: session links: the engine and scheduler, the offline export, the hybrid search, the TLS fix]]
 

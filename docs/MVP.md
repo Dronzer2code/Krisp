@@ -1,8 +1,8 @@
-# MVP.md — Pocket
+# MVP.md — Krisp
 
 ## PURPOSE
 
-Defines the minimum Pocket that MUST ship before 2026-10-05T06:59:00Z: priority of every feature item, acceptance criteria, the demo scenario, and the cut-line.
+Defines the minimum Krisp that MUST ship before 2026-10-05T06:59:00Z: priority of every feature item, acceptance criteria, the demo scenario, and the cut-line.
 Feature definitions: `docs/PRD.md` (F1–F12). Implementation: `docs/TRD.md`.
 
 ## CONTEXT

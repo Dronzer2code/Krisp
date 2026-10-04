@@ -11,7 +11,7 @@ import { Meter } from '../ui/Meter';
 import { Pad } from '../ui/Pad';
 import { Toggle } from '../ui/Toggle';
 
-// Home → "How to use Pocket": a hands-on tutorial on manuscript paper. Headings and notes are hand-lettered
+// Home → "How to use Krisp": a hands-on tutorial on manuscript paper. Headings and notes are hand-lettered
 // (Petaluma Script); every control in it is the real UI primitive, so trying it here is trying it in the app.
 
 const HIDE_KEY = 'pocket.guide.hidden';
