@@ -80,6 +80,9 @@ export function TransportBar() {
         <Lcd label="Tempo (BPM)" value={bpm} min={BPM_MIN} max={BPM_MAX} step={0.1} format={(v) => v.toFixed(1).padStart(5, '0')}
           onChange={(v) => actions.setBpm('gesture', v)} onChangeEnd={actions.endGesture} />
         <button ref={tapRef} className="btn h-8 px-s3" aria-label="Tap tempo (T)" onClick={tap}>TAP</button>
+        <Knob label="Tempo knob (BPM)" shortLabel="TEMPO" size="sm" value={bpm} min={BPM_MIN} max={BPM_MAX} step={1} defaultValue={120}
+          format={(v) => `${Math.round(v)} BPM`}
+          onChange={(v) => actions.setBpm('gesture', v)} onChangeEnd={actions.endGesture} />
       </div>
 
       <Knob label="Swing" size="sm" value={swing} min={0} max={SWING_MAX} defaultValue={0}
