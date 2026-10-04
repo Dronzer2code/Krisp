@@ -2,7 +2,7 @@ import { lazy, Suspense, useEffect, useState } from 'react';
 import { ApiError } from '../api/client';
 import { flushPending, startAutosave, stopAutosave } from '../api/autosave';
 import { getWorkspace } from '../api/workspaces';
-import { prefetchBuffers, stop } from '../audio/context';
+import { prefetchBuffers, stop, warmUpOnFirstGesture } from '../audio/context';
 import { navigate } from '../router';
 import { useUi } from '../store/ui';
 import { useWorkspace } from '../store/workspace';
@@ -66,6 +66,7 @@ export default function Workspace({ id }: { id: string }) {
   const exportOpen = useUi((s) => s.exportOpen);
   const name = useWorkspace((s) => s.workspace.name);
   useShortcuts();
+  useEffect(() => warmUpOnFirstGesture(), []);
 
   useEffect(() => {
     document.title = `${name} · Pocket`;

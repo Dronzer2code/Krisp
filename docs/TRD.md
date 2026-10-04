@@ -293,14 +293,16 @@ flowchart LR
 - Compressor/limiter params are set directly (`param.value`), not ramped: Tone ramps start from 1e-7 when the current value is 0, outside the threshold range [-100, 0].
 - Disabled compressor: threshold 0, ratio 1. Disabled limiter: threshold 0. (No rewiring during playback.)
 - Ceiling clipper (added 2026-10-03): Tone.Limiter is a DynamicsCompressor (automatic makeup gain, transients pass during attack) — measured: a 0 dB sine through a −12 dB/20:1 compressor only dropped to −4.2 dB. A WaveShaper soft clipper `c·tanh(x/c)` at the limiter ceiling (no oversampling — its filters overshoot the ceiling; input pre-scaled ÷8 for +18 dB headroom) after the Master Volume guarantees peaks ≤ ceiling. Limiter off → identity curve.
-- Parameter changes use `rampTo(value, 0.02)`.
+- Parameter changes use `rampTo(value, 0.02)`. `sync()` runs on every store change, so `applyChannel`/`applyMaster` skip values identical to the last ones applied (2026-10-04).
+- Each Channel strip input is a zero-time `Tone.Delay` (2026-10-04). standardized-audio-context runs a cycle check on every `connect()` that enumerates every path from the target to the destination (through EQ3 bands, sends, meters: hundreds of paths); it stops at a DelayNode. Every drum hit connects new nodes, so without the barrier a full grid kept the main thread saturated and loops stuttered. A zero delay adds no latency outside a feedback loop.
 - Metronome: a short Synth routed directly to Master Volume (bypasses mixer).
 - `Engine` API: `ensureSlot(slot)`, `removeSlot(id)`, `ensureAudioLane(id)`, `removeAudioLane(id)`, `applyChannel(id, channel)`, `applyMaster(master)`, `trigger(slotId, time, velocity)`, `preview(slotId)`, `meters(): Record<Id|'master', number>`, `dispose()`.
 
 ### Voices (`src/audio/voices.ts`)
 
 - `SynthVoice`: per preset recipe; `trigger(time, velocity, tune)` → `triggerAttackRelease(note transposed by tune, '16n', time, velocity/127)`.
-- `SampleVoice`: holds the decoded/trimmed `AudioBuffer`; each trigger creates a `Tone.ToneBufferSource` (one-shot, allows overlapping hits) with `playbackRate = 2^(tune/12)` and a per-hit gain = velocity/127, connected to the Slot's Velocity Gain input.
+- `BakedMetalVoice` (live context only; offline export keeps `SynthVoice`): MetalSynth presets (Closed Hat, Open Hat, Crash) build ~12 oscillators per hit, so each is rendered once per (tune, velocity level) in its own `Tone.OfflineContext` (queued one render per task) and hits play the buffer (gain = velocity/level), monophonic (a new hit chokes the previous). Velocity also moves MetalSynth's high-pass filter, so levels are baked: 40/80/100/127 exact, others to the nearest 8 (≈1% of peak difference, measured). Until a buffer is ready the hit uses the synth.
+- `SampleVoice`: holds the decoded/trimmed `AudioBuffer`; each trigger creates a `Tone.ToneBufferSource` (one-shot, allows overlapping hits, max `SAMPLE_POLYPHONY` = 4 per Slot; the oldest fades out in 8 ms) with `playbackRate = 2^(tune/12)` and a per-hit gain = velocity/127, connected to the Slot's Velocity Gain input.
 - Buffers come from `buffers.ts` cache (fetch `/api/sound-audio?id=` → `analyze.prepareOneShot` or `prepareLoop`).
 
 ## SCHEDULING (`src/audio/scheduler.ts`)
@@ -373,6 +375,9 @@ Pure functions (unit-tested) + one Transport binding.
 
 - Initial JS ≤ 600 KB gzip excluding lazily loaded Magenta and transformers.js chunks.
 - Grid renders 8 × 32 pads without dropped frames during playback (playhead via external store + CSS class toggles, not full re-render).
+- Song clip mini maps are one SVG path per velocity level, memoised per (Beat, Rack, length): a pad click re-renders no per-cell elements.
+- The audio engine is built on the first click/key in a Workspace (`warmUpOnFirstGesture`), not on the first beat after Play.
+- Measured 2026-10-04 (headless Chrome, CPU throttled 4×, 10 Slots × 16 steps all on, looping): 0 late scheduler ticks, no long tasks, ~67 fps; before the fixes the page stopped responding.
 - Workspace JSON stays small (no audio inside); Sounds are fetched by id and cached in memory.
 
 ## TESTING (`tests/`, vitest)

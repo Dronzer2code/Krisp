@@ -1,7 +1,8 @@
 import * as Tone from 'tone';
 import type { Channel, Id, Master, Slot, SynthPreset, Workspace } from '../model/types';
 import { channelIds, channelOf, isChannelSilenced } from '../store/selectors';
-import { SampleVoice, SynthVoice, type Voice } from './voices';
+import { KIT } from '../presets/kit';
+import { BakedMetalVoice, SampleVoice, SynthVoice, type Voice } from './voices';
 
 // docs/TRD.md → AUDIO ENGINE. createEngine(context) works with the live context and an offline context (export).
 //
@@ -25,7 +26,8 @@ export function clipperCurve(ceilingDb: number | null, n = 4096): Float32Array {
 }
 
 interface Strip {
-  input: Tone.Gain;
+  /** Zero-time DelayNode: a cycle-check barrier (see makeStrip). */
+  input: Tone.Delay;
   eq: Tone.EQ3;
   volume: Tone.Volume;
   /** Mute/solo gate (gain 0/1, 10 ms ramp). Separate from Volume so fader moves never undo a mute. */
@@ -118,9 +120,17 @@ export function createEngine(context: Tone.BaseContext): Engine {
   const audioSources = new Set<{ src: Tone.ToneBufferSource; gain: Tone.Gain }>();
   const previewGain = new Tone.Gain({ context, gain: 0.9 }).connect(masterBus);
   const previewVoices = new Map<SynthPreset, SynthVoice>();
+  // Last values pushed to the audio graph. sync() runs on every store change (each pad click, each knob move),
+  // so unchanged Channels/Master are skipped instead of re-ramping every param of every strip.
+  const appliedChannels = new Map<Id, string>();
+  let appliedMaster = '';
 
   function makeStrip(): Strip {
-    const input = new Tone.Gain({ context });
+    // standardized-audio-context runs a cycle check on every connect() that walks every path from the target to
+    // the speakers; through EQ3 bands, sends and meters that is hundreds of paths, and every drum hit connects
+    // new nodes (a MetalSynth hit ~24 connects). The check stops at a DelayNode, so each strip starts with a
+    // zero-time delay: no added latency outside a feedback loop, and hits only pay for their own few nodes.
+    const input = new Tone.Delay({ context, delayTime: 0, maxDelay: 0.01 });
     const eq = new Tone.EQ3({ context });
     const volume = new Tone.Volume({ context });
     const gate = new Tone.Gain({ context, gain: 1 });
@@ -140,7 +150,10 @@ export function createEngine(context: Tone.BaseContext): Engine {
   }
 
   function makeVoice(slot: Slot, strip: Strip): Voice {
-    return slot.sound.kind === 'synth' ? new SynthVoice(context, slot.sound.preset, strip.input) : new SampleVoice(context, strip.input);
+    if (slot.sound.kind === 'sample') return new SampleVoice(context, strip.input);
+    // Live playback plays hats/crash from pre-rendered buffers; offline export keeps the synth (no realtime limit).
+    if (!context.isOffline && KIT[slot.sound.preset].recipe.type === 'metal') return new BakedMetalVoice(context, slot.sound.preset, strip.input);
+    return new SynthVoice(context, slot.sound.preset, strip.input);
   }
 
   const engine: Engine = {
@@ -153,6 +166,7 @@ export function createEngine(context: Tone.BaseContext): Engine {
       if (!cur) {
         const strip = makeStrip();
         slots.set(slot.id, { strip, voice: makeVoice(slot, strip), soundKey: key, tune: slot.tune });
+        appliedChannels.delete(slot.id);
         return;
       }
       cur.tune = slot.tune;
@@ -169,10 +183,13 @@ export function createEngine(context: Tone.BaseContext): Engine {
       cur.voice.dispose();
       disposeStrip(cur.strip);
       slots.delete(id);
+      appliedChannels.delete(id);
     },
 
     ensureAudioLane(id) {
-      if (!lanes.has(id)) lanes.set(id, makeStrip());
+      if (lanes.has(id)) return;
+      lanes.set(id, makeStrip());
+      appliedChannels.delete(id);
     },
 
     removeAudioLane(id) {
@@ -180,6 +197,7 @@ export function createEngine(context: Tone.BaseContext): Engine {
       if (!s) return;
       disposeStrip(s);
       lanes.delete(id);
+      appliedChannels.delete(id);
     },
 
     channelInput(id) {
@@ -194,6 +212,9 @@ export function createEngine(context: Tone.BaseContext): Engine {
     applyChannel(id, ch, silenced) {
       const s = slots.get(id)?.strip ?? lanes.get(id);
       if (!s) return;
+      const key = JSON.stringify(ch) + silenced;
+      if (appliedChannels.get(id) === key) return;
+      appliedChannels.set(id, key);
       s.volume.volume.rampTo(ch.volumeDb, RAMP);
       s.gate.gain.linearRampTo(silenced ? 0 : 1, 0.01);
       s.panner.pan.rampTo(ch.pan, RAMP);
@@ -204,6 +225,9 @@ export function createEngine(context: Tone.BaseContext): Engine {
     },
 
     applyMaster(m) {
+      const key = JSON.stringify(m);
+      if (key === appliedMaster) return;
+      appliedMaster = key;
       masterVol.volume.rampTo(m.volumeDb, RAMP);
       masterEq.low.rampTo(m.eq.low, RAMP);
       masterEq.mid.rampTo(m.eq.mid, RAMP);

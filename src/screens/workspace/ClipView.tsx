@@ -11,26 +11,37 @@ import { WarningIcon } from '../../ui/icons';
 export const BAR_W = 48;
 export const LANE_H = 52;
 
-function BeatMap({ beat, rack, bars }: { beat: Beat; rack: Slot[]; bars: number }) {
+/** Mini pad map as one SVG path per velocity level (a full 32-step Beat over 8 bars is thousands of cells). */
+export function beatMapPaths(beat: Beat, rack: Slot[], bars: number): { rows: number; h: number; paths: [number, string][] } {
   const rows = rack.filter((s) => beat.steps[s.id]?.some((st) => st.on));
   const cell = BAR_W / 16;
   const h = rows.length ? Math.min(6, (LANE_H - 18) / rows.length) : 0;
-  const rects: JSX.Element[] = [];
+  const w = Math.max(1, cell - 1).toFixed(2);
+  const hh = Math.max(1, h - 1).toFixed(2);
+  const byLevel = new Map<number, string[]>();
   for (let rep = 0; rep * beat.length < bars * 16; rep++) {
     rows.forEach((slot, r) => {
       beat.steps[slot.id].forEach((st, i) => {
         const x = (rep * beat.length + i) * cell;
         if (!st.on || x >= bars * BAR_W) return;
-        rects.push(<rect key={`${rep}-${r}-${i}`} x={x + 0.5} y={r * h} width={Math.max(1, cell - 1)} height={Math.max(1, h - 1)} rx={0.5} fill="rgba(255,255,255,.85)" opacity={0.35 + (0.65 * st.velocity) / 127} />);
+        const level = Math.round((0.35 + (0.65 * st.velocity) / 127) * 100) / 100;
+        let parts = byLevel.get(level);
+        if (!parts) byLevel.set(level, (parts = []));
+        parts.push(`M${(x + 0.5).toFixed(2)} ${(r * h).toFixed(2)}h${w}v${hh}h-${w}z`);
       });
     });
   }
+  return { rows: rows.length, h, paths: [...byLevel].map(([level, parts]) => [level, parts.join('')]) };
+}
+
+const BeatMap = memo(function BeatMap({ beat, rack, bars }: { beat: Beat; rack: Slot[]; bars: number }) {
+  const { rows, h, paths } = useMemo(() => beatMapPaths(beat, rack, bars), [beat, rack, bars]);
   return (
-    <svg aria-hidden="true" width={bars * BAR_W} height={rows.length * h} className="pointer-events-none">
-      {rects}
+    <svg aria-hidden="true" width={bars * BAR_W} height={rows * h} className="pointer-events-none">
+      {paths.map(([level, d]) => <path key={level} d={d} fill="rgba(255,255,255,.85)" opacity={level} />)}
     </svg>
   );
-}
+});
 
 function Wave({ clip, bpm }: { clip: AudioClip; bpm: number }) {
   useBufferVersion();
