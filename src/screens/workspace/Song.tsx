@@ -6,13 +6,15 @@ import { barSeconds } from '../../audio/scheduler';
 import type { Clip, Id, Lane } from '../../model/types';
 import { SONG_BARS_MAX } from '../../model/types';
 import { beatBars } from '../../store/ops';
+import { LAYOUT_LIMITS, useLayout } from '../../store/layout';
 import { useUi } from '../../store/ui';
 import { actions, useWorkspace } from '../../store/workspace';
 import { Lcd } from '../../ui/Lcd';
 import { PlusIcon } from '../../ui/icons';
+import { Splitter } from '../../ui/Splitter';
 import { BAR_W, ClipView } from './ClipView';
 import { BEAT_DRAG_TYPE, SOUND_DRAG_TYPE, type SoundDragPayload } from './dnd';
-import { HEADER_W, LaneRow } from './LaneRow';
+import { HEADER_W, LANE_GRID_BG, LaneRow } from './LaneRow';
 
 // docs/PRD.md F5; docs/PROCESS_FLOW.md J7; docs/UI_DESIGN.md → Song.
 
@@ -151,6 +153,8 @@ export function Song() {
   const beatLanes = w.lanes.filter((l) => l.type === 'BEAT').length;
   const audioLanes = w.lanes.length - beatLanes;
   const lanesHeight = RULER_H + w.lanes.length * 52;
+  const songH = useLayout((s) => s.songH);
+  const setSize = useLayout((s) => s.setSize);
 
   return (
     <section aria-label="Song" className="panel flex min-w-0 flex-col p-s4">
@@ -164,9 +168,9 @@ export function Song() {
         </div>
       </div>
 
-      <div className="relative min-w-0 overflow-x-auto rounded-md bg-panel-sunken shadow-sunken" onPointerDown={(e) => e.target === e.currentTarget && useUi.getState().set({ selectedClipId: null })}>
-        <div className="relative" style={{ width: HEADER_W + width }}>
-          <div className="flex">
+      <div className="no-scrollbar relative min-w-0 overflow-auto rounded-md bg-panel-sunken shadow-sunken" style={{ height: songH ?? undefined }} onPointerDown={(e) => e.target === e.currentTarget && useUi.getState().set({ selectedClipId: null })}>
+        <div className="relative flex min-h-full flex-col" style={{ width: HEADER_W + width }}>
+          <div className="sticky top-0 z-20 flex bg-panel-sunken">
             <div className="sticky left-0 z-10 shrink-0 border-b border-r border-panel-sunken bg-panel" style={{ width: HEADER_W, height: RULER_H }} />
             <Ruler bars={bars} loop={w.loop} />
           </div>
@@ -187,14 +191,22 @@ export function Song() {
                 ))}
             </LaneRow>
           ))}
-          <SongPlayhead height={lanesHeight} />
+          {/* Filler below the last lane when the Song is taller than its lanes: header column + grid continue. */}
+          <div aria-hidden="true" className="flex flex-1">
+            <div className="sticky left-0 z-10 shrink-0 border-r border-panel-sunken bg-panel" style={{ width: HEADER_W }} />
+            <div className="shrink-0" style={{ width, backgroundImage: LANE_GRID_BG }} />
+          </div>
+          <SongPlayhead height={Math.max(lanesHeight, songH ?? 0)} />
           {w.clips.length === 0 && (
             <p className="pointer-events-none absolute text-ink-soft" style={{ left: HEADER_W + 16, top: RULER_H + 16 }}>Drag a beat here to start your tune.</p>
           )}
         </div>
       </div>
 
-      <div className="mt-s3 flex flex-wrap gap-s2">
+      <Splitter label="Song height" axis="y" className="-mb-s2 h-[12px] w-full" value={songH ?? lanesHeight} min={LAYOUT_LIMITS.songH.min} max={LAYOUT_LIMITS.songH.max}
+        onChange={(v) => setSize({ songH: v })} onReset={() => setSize({ songH: null })} />
+
+      <div className="mt-s1 flex flex-wrap gap-s2">
         <button className="btn" onClick={() => actions.addLane('BEAT')}><PlusIcon /> Beat lane</button>
         <button className="btn" onClick={() => actions.addLane('AUDIO')}><PlusIcon /> Audio lane</button>
         <span className="label ml-auto self-center">Drag clip edges to repeat · Alt-drag duplicates · Delete removes</span>

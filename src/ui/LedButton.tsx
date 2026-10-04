@@ -10,11 +10,17 @@ export interface LedButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElem
   /** Toggle buttons expose aria-pressed; action buttons do not. */
   toggle?: boolean;
   size?: number;
+  /** Hide the LED dot (plain action buttons such as Play / Return to start). */
+  led?: boolean;
   wide?: boolean;
   children?: ReactNode;
 }
 
-export function LedButton({ label, on = false, color = 'var(--led-on)', toggle = true, size = 28, wide, children, className = '', style, ...rest }: LedButtonProps) {
+export function LedButton({ label, on = false, color = 'var(--led-on)', toggle = true, size = 28, led = true, wide, children, className = '', style, ...rest }: LedButtonProps) {
+  // The LED must never sit on the label: wide buttons reserve room on the right; small square ones (M/S)
+  // get a smaller dot tucked into the corner and nudge their letter left.
+  const compact = !wide && size <= 24;
+  const padding = wide ? (led ? '0 17px 0 10px' : '0 10px') : compact && led ? '1px 3px 0 0' : undefined;
   return (
     <button
       type="button"
@@ -22,10 +28,10 @@ export function LedButton({ label, on = false, color = 'var(--led-on)', toggle =
       title={label}
       aria-pressed={toggle ? on : undefined}
       className={`led-btn relative inline-flex shrink-0 items-center justify-center gap-s1 ${className}`}
-      style={{ minWidth: size, height: size, padding: wide ? '0 10px 0 8px' : undefined, ...style }}
+      style={{ minWidth: size, height: size, padding, ...style }}
       {...rest}
     >
-      <span aria-hidden="true" className="led absolute right-[4px] top-[4px] h-[6px] w-[6px] rounded-full" data-on={on || undefined} style={{ ['--led' as string]: color }} />
+      {led && <span aria-hidden="true" className={`led absolute rounded-full ${compact ? 'right-[2px] top-[2px] h-[5px] w-[5px]' : 'right-[3px] top-[3px] h-[6px] w-[6px]'}`} data-on={on || undefined} style={{ ['--led' as string]: color }} />}
       {children}
     </button>
   );

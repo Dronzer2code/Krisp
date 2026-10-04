@@ -71,7 +71,7 @@ export const SoundRow = memo(function SoundRow({ sound, badges }: { sound: Sound
         e.dataTransfer.effectAllowed = 'copy';
       }}
     >
-      <LedButton label={`Preview ${sound.name}`} toggle={false} size={28} onClick={() => void previewSound(usable)}><PlayIcon size={12} /></LedButton>
+      <LedButton label={`Preview ${sound.name}`} toggle={false} led={false} size={28} onClick={() => void previewSound(usable)}><PlayIcon size={12} /></LedButton>
       <div className="min-w-0 flex-1">
         <div className="truncate text-[12px] font-semibold" title={sound.prompt ?? sound.name}>{sound.name}</div>
         <div className="mt-[3px] flex items-center gap-[3px] overflow-hidden">

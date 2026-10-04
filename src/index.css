@@ -10,6 +10,10 @@ body,
   min-height: 100%;
 }
 
+/* The page still scrolls (wheel, trackpad, keys, touch) but shows no scrollbar. */
+html { scrollbar-width: none; }
+html::-webkit-scrollbar { display: none; }
+
 body {
   margin: 0;
   background: var(--bg);
@@ -44,6 +48,20 @@ body {
   box-shadow: var(--shadow-sunken);
   border-radius: var(--r-sm);
 }
+
+/* Scroll without a visible bar (Song: Shift + wheel / trackpad / touch still scroll horizontally) */
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* ── Splitter (panel resize grip) ── */
+.splitter-grip { background: var(--ink-soft); opacity: .28; transition: opacity var(--t-fast) var(--ease), background var(--t-fast) var(--ease); }
+.splitter:hover .splitter-grip, .splitter:focus-visible .splitter-grip, .splitter[data-dragging] .splitter-grip { background: var(--led-on); opacity: 1; }
+.splitter:focus-visible { outline: none; }
+/* Column splitters beside the beat grid show no line at rest; the grip appears on hover / focus / drag. */
+.splitter[aria-orientation='vertical'] .splitter-grip { opacity: 0; }
+.splitter[aria-orientation='vertical']:hover .splitter-grip,
+.splitter[aria-orientation='vertical']:focus-visible .splitter-grip,
+.splitter[aria-orientation='vertical'][data-dragging] .splitter-grip { opacity: 1; }
 
 /* ── Buttons ── */
 .btn, .led-btn, .chip {
@@ -158,6 +176,8 @@ body {
   border-radius: var(--r-sm); color: var(--ink); font: var(--text);
 }
 .field:focus-visible { outline: 2px solid var(--led-on); outline-offset: 1px; }
+/* Multi-line fields: .field's fixed 32 px height and zero vertical padding would clip the second line. */
+textarea.field { height: auto; min-height: 72px; padding: var(--s2) var(--s3); line-height: 1.4; }
 
 /* ── Dialog ── */
 .dialog-backdrop { background: rgba(40,38,34,.35); animation: fade-in var(--t-base) var(--ease); }

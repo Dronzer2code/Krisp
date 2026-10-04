@@ -74,9 +74,9 @@ export function Menu({ anchor, label, items, onClose, footer }: MenuProps) {
         if (e.key === 'Tab') closeRef.current();
       }}
     >
-      {items.map((it) => (
+      {items.map((it, i) => (
         <button
-          key={it.label}
+          key={`${i}:${it.label}`} // labels can repeat (two Slots named "New slot")
           type="button"
           role="menuitem"
           disabled={it.disabled}

@@ -32,7 +32,7 @@ export function BeatChips() {
 
   return (
     <div className="flex min-w-0 items-center gap-s2" style={{ height: CHIPS_H, marginBottom: MAIN_GAP }}>
-      <div ref={listRef} role="tablist" aria-label="Beats" className="flex min-w-0 items-center gap-s2 overflow-x-auto px-[2px] py-s1">
+      <div ref={listRef} role="tablist" aria-label="Beats" className="no-scrollbar flex min-w-0 items-center gap-s2 overflow-x-auto px-[2px] py-s1">
         {beats.map((b, i) => (
           <Chip
             key={b.id}
@@ -64,7 +64,7 @@ export function BeatChips() {
         <PlusIcon />
       </button>
       <button className="btn shrink-0" aria-haspopup="menu" onClick={(e) => setPresetMenu(e.currentTarget)}>Insert preset</button>
-      <span className="label ml-auto hidden shrink-0 wide:inline">Right-click a beat for options · drag to the Song</span>
+      <span className="label ml-auto hidden min-w-0 shrink-[100] truncate wide:inline">Right-click a beat for options · drag to the Song</span>
 
       <Menu
         anchor={presetMenu}

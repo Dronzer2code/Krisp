@@ -12,10 +12,11 @@ import { MoreIcon } from '../../ui/icons';
 import { Knob } from '../../ui/Knob';
 import { LedButton } from '../../ui/LedButton';
 import { Menu, Swatches } from '../../ui/Menu';
+import { VolumeKnob } from '../../ui/VolumeKnob';
 import { ROW_H } from './layout';
 
 // docs/UI_DESIGN.md → Rack row (44 px): LED dot (flashes on hit), name (double-click rename), sound name
-// (click → Sounds in replace mode), Preview pad, Tune knob, M/S, ⋯ (Recolor, Remove).
+// (click → Sounds in replace mode), Preview pad, Tune knob, Volume knob (= Mixer fader), M/S, ⋯ (Recolor, Remove).
 
 function SlotLed({ slot }: { slot: Slot }) {
   const ref = useRef<HTMLSpanElement>(null);
@@ -105,9 +106,11 @@ export const SlotRow = memo(function SlotRow({ slot, channel, compact }: { slot:
           }
         }}
       />
-      <Knob label={`${slot.name} tune`} hideLabel size="sm" bipolar value={slot.tune} min={-TUNE_RANGE} max={TUNE_RANGE} step={1} defaultValue={0}
+      <Knob label={`${slot.name} tune`} hideLabel size="sm" value={slot.tune} min={-TUNE_RANGE} max={TUNE_RANGE} step={1} defaultValue={0}
         format={(v) => `${v > 0 ? '+' : ''}${v} st`}
         onChange={(v) => actions.updateSlot('gesture', slot.id, { tune: v })} onChangeEnd={actions.endGesture} />
+      <VolumeKnob label={`${slot.name} volume`} hideLabel valueDb={channel.volumeDb}
+        onChange={(db) => actions.setChannel('gesture', slot.id, { volumeDb: db })} onChangeEnd={actions.endGesture} />
       <LedButton label={`Mute ${slot.name}`} size={22} on={channel.mute} color="var(--led-amber)" onClick={() => actions.setChannel('push', slot.id, { mute: !channel.mute })}>M</LedButton>
       <LedButton label={`Solo ${slot.name}`} size={22} on={channel.solo} color="var(--led-green)" onClick={() => actions.setChannel('push', slot.id, { solo: !channel.solo })}>S</LedButton>
       <button type="button" className="icon-btn h-6 w-5" aria-label={`${slot.name} options`} aria-haspopup="menu" onClick={(e) => setMenu(e.currentTarget)}>

@@ -259,7 +259,7 @@ export function BeatEditor() {
 
   return (
     <section aria-label={`Beat Editor: ${beat.name}`} className="panel flex min-w-0 flex-col" style={{ padding: PANEL_PAD }}>
-      <div ref={scrollRef} className="min-w-0 overflow-x-auto">
+      <div ref={scrollRef} className="no-scrollbar min-w-0 overflow-x-auto">
         <div className="flex" style={{ height: STEP_NUMS_H, marginBottom: STEP_NUMS_GAP }} aria-hidden="true">
           <span className="mid:hidden shrink-0" style={{ width: ROW_LABEL_W }} />
           <div className="flex" style={{ gap: GROUP_GAP }}>

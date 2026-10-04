@@ -30,6 +30,9 @@ export function posToDb(pos: number): number {
   return FADER_MAX_DB;
 }
 
+/** Fader/knob volume resolution: 0.1 dB, snapping the bottom to −∞. */
+export const roundDb = (db: number) => (db <= FADER_MIN_DB + 0.05 ? FADER_MIN_DB : Math.round(db * 10) / 10);
+
 export const formatDb = (db: number) => (db <= FADER_MIN_DB ? '−∞' : `${db > 0 ? '+' : ''}${db.toFixed(1)} dB`);
 
 export interface FaderProps {
@@ -37,22 +40,24 @@ export interface FaderProps {
   valueDb: number;
   height?: number;
   disabled?: boolean;
+  /** Hide the visible label (the strip already names the channel); `label` stays the accessible name. */
+  hideLabel?: boolean;
   onChange: (db: number) => void;
   onChangeEnd?: () => void;
 }
 
 const MARKS = [6, 0, -6, -12, -24, -48, FADER_MIN_DB];
-const CAP_H = 34;
+export const FADER_CAP_H = 34;
+const CAP_H = FADER_CAP_H;
 
-export function Fader({ label, valueDb, height = 140, disabled, onChange, onChangeEnd }: FaderProps) {
+export function Fader({ label, valueDb, height = 140, disabled, hideLabel, onChange, onChangeEnd }: FaderProps) {
   const track = height - CAP_H;
   const pos = dbToPos(valueDb);
   const st = useRef<{ y: number; pos: number; id: number } | null>(null);
   const [dragging, setDragging] = useState(false);
-  const round = (db: number) => (db <= FADER_MIN_DB + 0.05 ? FADER_MIN_DB : Math.round(db * 10) / 10);
 
   const commit = (db: number) => {
-    onChange(round(Math.min(FADER_MAX_DB, Math.max(FADER_MIN_DB, db))));
+    onChange(roundDb(Math.min(FADER_MAX_DB, Math.max(FADER_MIN_DB, db))));
     onChangeEnd?.();
   };
 
@@ -90,7 +95,7 @@ export function Fader({ label, valueDb, height = 140, disabled, onChange, onChan
             if (!s || s.id !== e.pointerId) return;
             const scale = e.shiftKey ? 0.2 : 1;
             const p = Math.min(1, Math.max(0, s.pos + ((s.y - e.clientY) / track) * scale));
-            onChange(round(posToDb(p)));
+            onChange(roundDb(posToDb(p)));
           }}
           onPointerUp={(e) => {
             if (st.current?.id !== e.pointerId) return;
@@ -128,7 +133,7 @@ export function Fader({ label, valueDb, height = 140, disabled, onChange, onChan
           {dragging && <span role="tooltip" className="lcd-tip absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap">{formatDb(valueDb)}</span>}
         </div>
       </div>
-      <span className="label">{label}</span>
+      {!hideLabel && <span className="label">{label}</span>}
     </div>
   );
 }

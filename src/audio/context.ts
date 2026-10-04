@@ -64,6 +64,24 @@ export function ensureAudioStarted(): Promise<Engine> {
   return starting;
 }
 
+/**
+ * Starts audio on the first click/key in a Workspace (a user gesture, as browsers require), so building the
+ * engine (every Slot strip, pre-rendering hats) happens then and not on the first beat after Play.
+ */
+export function warmUpOnFirstGesture(): () => void {
+  const warm = () => {
+    remove();
+    ensureAudioStarted().catch(() => {});
+  };
+  const remove = () => {
+    window.removeEventListener('pointerdown', warm, true);
+    window.removeEventListener('keydown', warm, true);
+  };
+  window.addEventListener('pointerdown', warm, true);
+  window.addEventListener('keydown', warm, true);
+  return remove;
+}
+
 export function isPlaying(): boolean {
   return Tone.getTransport().state === 'started';
 }

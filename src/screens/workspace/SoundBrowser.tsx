@@ -73,7 +73,7 @@ function PresetsTab() {
     <ul className="flex flex-col">
       {KIT_ORDER.map((p) => (
         <li key={p} className="flex min-h-12 items-center gap-s2 rounded-sm px-s1 hover:bg-panel-sunken">
-          <LedButton label={`Preview ${KIT[p].label}`} toggle={false} size={28} onClick={() => void previewPreset(p)}><PlayIcon size={12} /></LedButton>
+          <LedButton label={`Preview ${KIT[p].label} preset`} toggle={false} led={false} size={28} onClick={() => void previewPreset(p)}><PlayIcon size={12} /></LedButton>
           <span className="flex-1 text-[12px] font-semibold">{KIT[p].label}</span>
           <Badge>synth</Badge>
           <button
@@ -167,7 +167,7 @@ function CreateTab() {
       <label className="label" htmlFor="create-text">Describe the sound</label>
       <textarea
         id="create-text"
-        className="field h-[72px] resize-none py-s2"
+        className="field no-scrollbar h-[72px] resize-none py-s2"
         placeholder="Describe the sound — e.g. ‘dusty vinyl kick, warm, short tail’."
         value={text}
         maxLength={200}
@@ -364,7 +364,7 @@ function LibraryTab() {
       <div className="flex items-center gap-s2">
         <div role="radiogroup" aria-label="Kind filter" className="flex gap-s1">
           {(['ALL', 'ONE_SHOT', 'LOOP'] as const).map((k) => (
-            <button key={k} role="radio" aria-checked={kind === k} className={`chip h-6 px-s2 text-[11px] ${kind === k ? '' : ''}`} data-selected={kind === k || undefined} onClick={() => setKind(k)}>
+            <button key={k} role="radio" aria-checked={kind === k} className="chip inline-flex h-6 items-center rounded-full px-s3 text-[11px]" data-selected={kind === k || undefined} onClick={() => setKind(k)}>
               {k === 'ALL' ? 'All' : k === 'ONE_SHOT' ? 'One-shot' : 'Loop'}
             </button>
           ))}
