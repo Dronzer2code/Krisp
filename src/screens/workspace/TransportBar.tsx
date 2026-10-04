@@ -40,7 +40,7 @@ function Position() {
 function PlayButton() {
   const playing = usePlayhead((s) => s.playing);
   return (
-    <LedButton label={playing ? 'Stop (Space)' : 'Play (Space)'} toggle={false} on={playing} color="var(--led-green)" size={32} onClick={() => void togglePlay()}>
+    <LedButton label={playing ? 'Stop (Space)' : 'Play (Space)'} toggle={false} led={false} size={32} onClick={() => void togglePlay()}>
       {playing ? <StopIcon /> : <PlayIcon />}
     </LedButton>
   );
@@ -69,7 +69,7 @@ export function TransportBar() {
 
       <div className="flex items-center gap-s2">
         <PlayButton />
-        <LedButton label="Return to start (Enter)" toggle={false} size={32} onClick={() => void restart()}><ReturnIcon /></LedButton>
+        <LedButton label="Return to start (Enter)" toggle={false} led={false} size={32} onClick={() => void restart()}><ReturnIcon /></LedButton>
         <LedButton label="Loop region (L)" on={loop} size={32} onClick={() => actions.setLoop({ enabled: !loop })}><LoopIcon /></LedButton>
       </div>
 

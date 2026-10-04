@@ -10,11 +10,13 @@ export interface LedButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElem
   /** Toggle buttons expose aria-pressed; action buttons do not. */
   toggle?: boolean;
   size?: number;
+  /** Hide the LED dot (plain action buttons such as Play / Return to start). */
+  led?: boolean;
   wide?: boolean;
   children?: ReactNode;
 }
 
-export function LedButton({ label, on = false, color = 'var(--led-on)', toggle = true, size = 28, wide, children, className = '', style, ...rest }: LedButtonProps) {
+export function LedButton({ label, on = false, color = 'var(--led-on)', toggle = true, size = 28, led = true, wide, children, className = '', style, ...rest }: LedButtonProps) {
   return (
     <button
       type="button"
@@ -25,7 +27,7 @@ export function LedButton({ label, on = false, color = 'var(--led-on)', toggle =
       style={{ minWidth: size, height: size, padding: wide ? '0 10px 0 8px' : undefined, ...style }}
       {...rest}
     >
-      <span aria-hidden="true" className="led absolute right-[4px] top-[4px] h-[6px] w-[6px] rounded-full" data-on={on || undefined} style={{ ['--led' as string]: color }} />
+      {led && <span aria-hidden="true" className="led absolute right-[4px] top-[4px] h-[6px] w-[6px] rounded-full" data-on={on || undefined} style={{ ['--led' as string]: color }} />}
       {children}
     </button>
   );

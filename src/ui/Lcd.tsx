@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useVerticalDrag } from './useDrag';
 
 // docs/UI_DESIGN.md → PRIMITIVES → Lcd. Drag vertically to change, click to type, Enter commits, Esc cancels.
+// Fixed width = the widest value it can show (format(min) / format(max)), so typing never resizes it.
 
 export interface LcdProps {
   label: string;
@@ -20,6 +21,7 @@ export function Lcd({ label, value, min, max, step = 1, format = (v) => String(v
   const [editing, setEditing] = useState(false);
   const [text, setText] = useState('');
   const input = useRef<HTMLInputElement>(null);
+  const chars = Math.max(format(min).length, format(max).length);
   const snap = (v: number) => Math.round(Math.min(max, Math.max(min, v)) / step) * step;
 
   const drag = useVerticalDrag({
@@ -55,7 +57,7 @@ export function Lcd({ label, value, min, max, step = 1, format = (v) => String(v
       aria-valuenow={value}
       aria-valuetext={format(value)}
       className="lcd relative flex h-8 cursor-ns-resize touch-none select-none items-center justify-end px-s2"
-      style={{ minWidth: width }}
+      style={{ width: `max(${width}px, calc(${chars}ch + 16px))` }}
       {...(editing ? {} : drag)}
       onKeyDown={(e) => {
         if (editing || disabled) return;
@@ -75,7 +77,9 @@ export function Lcd({ label, value, min, max, step = 1, format = (v) => String(v
         <input
           ref={input}
           aria-label={`${label} value`}
-          className="w-full bg-transparent text-right outline-none"
+          className="w-full min-w-0 bg-transparent text-right outline-none"
+          size={1}
+          maxLength={chars}
           value={text}
           inputMode="decimal"
           onChange={(e) => setText(e.target.value)}
