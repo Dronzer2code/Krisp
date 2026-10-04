@@ -2,7 +2,7 @@
 title: The groove is the 40 milliseconds a grid throws away, so we built a beat studio that gives them back, in a browser tab
 published: true
 tags: devchallenge, weekendchallenge, hf26challenge
-cover_image: [[UPLOAD Blog images/05-workspace-overview.png TO DEV AND PASTE ITS URL]]
+cover_image: [[UPLOAD Blog images/00-cover.png TO DEV AND PASTE ITS URL]]
 ---
 
 *This is a submission for the [Hacktoberfest Weekend Challenge: Build for a Friend](https://dev.to/challenges/hacktoberfest-weekend-2026-10-01)*
@@ -58,35 +58,57 @@ Every number in this post was **measured**, and here is where:
 
 ### The walkthrough
 
-You land on your workspaces. Each card's colour strip is the first six beat colours inside it.
+Six stops, in the order you meet them.
+
+#### 1 · The dashboard
 
 ![Pocket home: workspace cards with beat-colour strips](Blog%20images/01-home-workspaces.png)
 
-A new workspace starts empty or from one of eight original patterns, each with its own tempo.
-
-![New workspace dialog: Empty plus eight preset beats with BPM and a mini pad map](Blog%20images/02-new-workspace-presets.png)
-
-Then the studio. Rack on the left, Beat Editor in the middle, Song underneath, Sounds and AI on the right.
-
-![The full workspace: transport, Rack, Beat Editor, Song timeline and sound library](Blog%20images/05-workspace-overview.png)
-
-The Rack rows *are* the Beat Editor's row headers. They're the same 44 px tall, and the pads stretch to fill whatever width you give them.
-
-![Rack and Beat Editor: ten slots, sixteen steps, velocity shown as brightness](Blog%20images/06-rack-and-beat-editor.png)
-
-Beats become a song by dragging them onto lanes. Dragging a clip's edge repeats the beat.
-
-![Song timeline: Lo-fi, Drum & Bass and Boom Bap clips on three beat lanes](Blog%20images/07-song-arrangement.png)
-
-Press **M** and the mixer slides up: a strip per sound, a reverb return, and a master with EQ, compressor, gain-reduction LEDs and a limiter.
-
-![Mixer drawer: ten channel strips, reverb return and master section](Blog%20images/08-mixer.png)
-
-And because it is built for one person, the Home page teaches it by hand, with live controls you can touch.
+Every idea is a card. Its colour strip is the first six beats inside it, so a sketch is recognisable before you open it. Under the cards, a hand-lettered guide teaches the whole app with real controls you can touch.
 
 ![Hand-lettered guide: eight steps from a blank page to a WAV](Blog%20images/03-guide-eight-steps.png)
 
-![Know your controls: every control is live, plus a sticky note of shortcuts](Blog%20images/04-guide-know-your-controls.png)
+> **For Anuv:** his ideas stop living in voice memos and stray files. They are all one click from Home, and he never needs a manual.
+
+#### 2 · Creating a workspace
+
+![New workspace dialog: Empty plus eight preset beats with BPM and a mini pad map](Blog%20images/02-new-workspace-presets.png)
+
+Start empty, or from one of eight original patterns, each with its own tempo and swing.
+
+> **For Anuv:** a groove is playing seconds after he opens the app, as a starting point he reshapes by hand, not a blank grid.
+
+#### 3 · The full workspace
+
+![The full workspace: transport, Rack, Beat Editor, Song timeline and sound library](Blog%20images/05-workspace-overview.png)
+
+One screen: the transport on top, the Rack on the left, the Beat Editor in the centre, the Song underneath, Sounds and AI on the right. Saving is automatic. The LED goes amber, then green.
+
+> **For Anuv:** nothing hides behind menus or modes. Beat, song and sounds are all in view while the idea is still warm.
+
+#### 4 · Left side: the Rack and the Beat Editor
+
+![Rack and Beat Editor: ten slots, sixteen steps, velocity shown as brightness](Blog%20images/06-rack-and-beat-editor.png)
+
+Each Rack row is one sound, with tune, mute, solo and a preview pad, and it *is* the row header of the grid beside it: same height, same order. Click to place a hit, drag to paint a row, Shift-click for a ghost note or an accent, or hit REC and play it in from the keyboard.
+
+> **For Anuv:** he programs the way he already thinks, and the grid keeps the velocity and swing that make it his.
+
+#### 5 · Right side: Sounds and AI
+
+![Library: playlists above unsorted sounds, each with an options menu](Blog%20images/10-library-playlists.png)
+
+Four tabs: Presets, Create (ElevenLabs), Upload and Library. The Library sorts sounds into playlists and searches by name or by vibe. The AI tab next to it holds Humanize, Variations, Continue and Morph (Stage 4 below).
+
+> **For Anuv:** an evening of digging through sample packs becomes one sentence and one search box.
+
+#### 6 · The mixer
+
+![Mixer drawer: ten channel strips, reverb return and master section](Blog%20images/08-mixer.png)
+
+Press **M**. Every sound gets a strip with EQ, reverb send, pan and fader. Then a reverb return, and a master with a compressor, gain-reduction LEDs and a limiter.
+
+> **For Anuv:** a sketch leaves Pocket already mixed, so the WAV he sends sounds finished, not like a demo.
 
 ## Demo
 
@@ -162,6 +184,8 @@ export function hitTime(tickTime: number, stepIndex: number, step: { offset: num
 ```
 
 The Transport never loops. The loop region is applied by one more pure function, `wrapTick`, so drum hits and audio clips are triggered by the **same** per-tick code and can't drift apart.
+
+![Song timeline: Lo-fi, Drum & Bass and Boom Bap clips on three beat lanes](Blog%20images/07-song-arrangement.png)
 
 ### Stage 3: the export is not a second renderer
 
@@ -270,9 +294,7 @@ Every result carries a **`vector`** badge, a **`keyword`** badge, or both, so yo
 
 [[SCREENSHOT: Library search showing vector and keyword badges for two queries]]
 
-The library is organised the way producers organise folders: **playlists**, where a sound can live in several at once, sit above everything still unsorted.
-
-![Library: playlists above unsorted sounds, each with an options menu](Blog%20images/10-library-playlists.png)
+The library is organised the way producers organise folders: **playlists**, where a sound can live in several at once, sit above everything still unsorted (you saw them in the walkthrough).
 
 This is the whole schema on Tiger Data, live:
 
